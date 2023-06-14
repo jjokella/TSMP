@@ -94,7 +94,7 @@ SUBROUTINE init_dim_obs_pdaf(step, dim_obs_p)
        clm_obs, &
        var_id_obs_nc, dim_nx, dim_ny, &
        clmobs_lon, clmobs_lat, clmobs_layer, clmobs_dr, clm_obserr, &
-       crns_flag, depth_obs
+       crns_flag, depth_obs, dampfac_state_flexible_in
   use mod_tsmp, &
       only: idx_map_subvec2state_fortran, tag_model_parflow, enkf_subvecsize, &
       nx_glob, ny_glob, nz_glob, &
@@ -104,7 +104,8 @@ SUBROUTINE init_dim_obs_pdaf(step, dim_obs_p)
       zcoord_fortran, &
 #endif
 #endif
-      tag_model_clm, point_obs, obs_interp_switch
+      tag_model_clm, point_obs, obs_interp_switch, is_dampfac_state_flexible, &
+      dampfac_state_flexible
 
 #ifndef PARFLOW_STAND_ALONE
 #ifndef OBS_ONLY_PARFLOW
@@ -179,6 +180,9 @@ SUBROUTINE init_dim_obs_pdaf(step, dim_obs_p)
   ! Read observation file
   ! ---------------------
 
+  ! Default: now local damping factor
+  is_dampfac_state_flexible = 0
+
   !  if I'm root in filter, read the nc file
   is_multi_observation_files = .true.
   if (is_multi_observation_files) then
@@ -207,6 +211,12 @@ SUBROUTINE init_dim_obs_pdaf(step, dim_obs_p)
      call mpi_bcast(dim_nx, 1, MPI_INTEGER, 0, comm_filter, ierror)
      call mpi_bcast(dim_ny, 1, MPI_INTEGER, 0, comm_filter, ierror)
   endif
+  ! broadcast dampfac_state_flexible_in
+  if(is_dampfac_state_flexible.eq.1) then
+     call mpi_bcast(dampfac_state_flexible_in, 1, MPI_DOUBLE_PRECISION, 0, comm_filter, ierror)
+     ! Set C-version of dampfac_state_flexible with value read from obsfile
+     dampfac_state_flexible = dampfac_state_flexible_in
+  end if
 
   ! Allocate observation arrays for non-root procs
   ! ----------------------------------------------
