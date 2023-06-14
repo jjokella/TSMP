@@ -27,6 +27,7 @@ module mod_tsmp
 
     integer(c_int) , bind(c) :: enkf_subvecsize, pf_statevecsize, nprocpf, nprocclm, nproccosmo
     integer(c_int) , bind(c,name="point_obs") :: point_obs
+    integer(c_int) , bind(c,name="is_dampfac_state_flexible") :: is_dampfac_state_flexible
     integer(c_int) , bind(c,name="obs_interp_switch") :: obs_interp_switch
     integer(c_int) , bind(c) :: nx_local, ny_local, nz_local, nx_glob, ny_glob, nz_glob
     integer(c_int), bind(c)  :: tag_model_clm = 0
@@ -40,6 +41,7 @@ module mod_tsmp
     integer(c_int), pointer  :: idx_map_subvec2state_fortran(:)
     type(c_ptr), bind(c)     :: soilay
     real(c_double), pointer  :: soilay_fortran(:)
+    real(c_double),bind(C,name="dampfac_state_flexible") :: dampfac_state_flexible
  
     interface
         subroutine initialize_tsmp() bind(c)
