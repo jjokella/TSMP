@@ -91,6 +91,7 @@ combinations+=(
 setups+=(
     ["cordex"]="444x432 (12km res) atmosphere 436x424 (12km res) land domain of Europe and northern Afrika"
 	["nrw"]="150x150 (1km res) atmosphere 300x300 (0.5km res) land domain of North-Rhine-Westphalia"
+	["nrw_5x"]="300x300 (0.5km res) land domain of North-Rhine-Westphalia setup for CLM 5"
 	["ideal300150"]="idealized domain with gridsize scaled to 150x150 (atmosphere) 300x300 (land)"
 	["ideal600300"]="idealized domain with gridsize scaled to 300x300 (atmosphere) 600x600 (land)"
 	["ideal1200600"]="idealized domain with gridsize scaled to 600x600 (atmosphere) 1200x1200 (land)"
@@ -102,9 +103,9 @@ setups+=(
 # list of setups that are available on a machine. (first is default)
 # IMPORTANT: add a leading and trailing " "(space)
 setupsAvail+=(
-	["JUWELS"]=" nrw ideal300150 ideal600300 ideal1200600 ideal24001200 cordex idealRTD idiurnal-cycle "
+	["JUWELS"]=" nrw nrw_5x ideal300150 ideal600300 ideal1200600 ideal24001200 cordex idealRTD idiurnal-cycle "
     ["JUSUF"]=" nrw ideal300150 ideal600300 ideal1200600 ideal24001200 cordex idealRTD idiurnal-cycle "
-	["JURECA"]=" nrw ideal300150 ideal600300 ideal1200600 ideal24001200 cordex idealRTD idiurnal-cycle "
+	["JURECA"]=" nrw nrw_5x ideal300150 ideal600300 ideal1200600 ideal24001200 cordex idealRTD idiurnal-cycle "
     ["DEEP"]=" nrw ideal300150 ideal600300 ideal1200600 ideal24001200 cordex idealRTD "
 	["GENERIC_X86"]=" nrw ideal300150 ideal600300 ideal1200600 ideal24001200 cordex idealRTD "
 )
