@@ -240,7 +240,7 @@ void update_tsmp(){
 
     /* Update damping factor if set in observation file */
     if(is_dampfac_state_flexible){
-      pf_dampfac_state = dampfac_state_flexible
+      pf_dampfac_state = dampfac_state_flexible;
     }
 
     /* state damping */
