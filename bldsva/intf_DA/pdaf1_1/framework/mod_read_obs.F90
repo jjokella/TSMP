@@ -52,7 +52,7 @@ module mod_read_obs
   integer :: dim_nx, dim_ny
   integer :: crns_flag=0   !hcp
   real, allocatable :: depth_obs(:)   !hcp
-  real :: dampfac_state_flexible_in
+  real, allocatable :: dampfac_state_flexible_in
 contains
 
   !> @author Wolfgang Kurtz, Guowei He, Mukund Pondkule
@@ -179,9 +179,12 @@ contains
 
       is_dampfac_state_flexible = 1
 
-      call check(nf90_get_var(ncid, damp_varid, dampfac_state_flexible_in))
+      if(allocated(dampfac_state_flexible_in)) deallocate(dampfac_state_flexible_in)
+      allocate(dampfac_state_flexible_in(1))
+
+      call check(nf90_get_var(ncid, damp_varid, dampfac_state_flexible_in(1)))
       if (screen > 2) then
-        print *, "TSMP-PDAF mype(w)=", mype_world, ": dampfac_state_flexible_in=", dampfac_state_flexible_in
+        print *, "TSMP-PDAF mype(w)=", mype_world, ": dampfac_state_flexible_in=", dampfac_state_flexible_in(1)
       end if
 
     end if

@@ -213,9 +213,18 @@ SUBROUTINE init_dim_obs_pdaf(step, dim_obs_p)
   endif
   ! broadcast dampfac_state_flexible_in
   if(is_dampfac_state_flexible.eq.1) then
+     if (screen > 2) then
+       print *, "TSMP-PDAF mype(w)=", mype_world, ": init_dim_obs_pdaf: dampfac_state_flexible_in=", dampfac_state_flexible_in(1)
+     end if
+
      call mpi_bcast(dampfac_state_flexible_in, 1, MPI_DOUBLE_PRECISION, 0, comm_filter, ierror)
      ! Set C-version of dampfac_state_flexible with value read from obsfile
-     dampfac_state_flexible = dampfac_state_flexible_in
+     dampfac_state_flexible = dampfac_state_flexible_in(1)
+
+     if (screen > 2) then
+       print *, "TSMP-PDAF mype(w)=", mype_world, ": init_dim_obs_pdaf: dampfac_state_flexible_in=", dampfac_state_flexible
+     end if
+
   end if
 
   ! Allocate observation arrays for non-root procs
