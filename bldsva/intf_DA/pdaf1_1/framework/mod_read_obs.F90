@@ -52,7 +52,7 @@ module mod_read_obs
   integer :: dim_nx, dim_ny
   integer :: crns_flag=0   !hcp
   real, allocatable :: depth_obs(:)   !hcp
-  real, allocatable :: dampfac_state_flexible_in
+  real, allocatable :: dampfac_state_flexible_in(:)
 contains
 
   !> @author Wolfgang Kurtz, Guowei He, Mukund Pondkule
