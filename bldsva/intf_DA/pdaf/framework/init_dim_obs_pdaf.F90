@@ -213,16 +213,26 @@ SUBROUTINE init_dim_obs_pdaf(step, dim_obs_p)
   endif
   ! broadcast dampfac_state_flexible_in
   if(is_dampfac_state_flexible.eq.1) then
+
+     if (mype_filter .ne. 0) then ! for all non-master proc
+       if(allocated(dampfac_state_flexible_in)) deallocate(dampfac_state_flexible_in)
+       allocate(dampfac_state_flexible_in(1))
+     end if
+
      if (screen > 2) then
-       print *, "TSMP-PDAF mype(w)=", mype_world, ": init_dim_obs_pdaf: dampfac_state_flexible_in=", dampfac_state_flexible_in(1)
+       print *, "TSMP-PDAF mype(w)=", mype_world, ": Before setting dampfac_state_flexible"
      end if
 
      call mpi_bcast(dampfac_state_flexible_in, 1, MPI_DOUBLE_PRECISION, 0, comm_filter, ierror)
+     if (screen > 2) then
+       print *, "TSMP-PDAF mype(w)=", mype_world, ": init_dim_obs_pdaf: dampfac_state_flexiblein=", dampfac_state_flexible_in
+     end if
+
      ! Set C-version of dampfac_state_flexible with value read from obsfile
      dampfac_state_flexible = dampfac_state_flexible_in(1)
 
      if (screen > 2) then
-       print *, "TSMP-PDAF mype(w)=", mype_world, ": init_dim_obs_pdaf: dampfac_state_flexible_in=", dampfac_state_flexible
+       print *, "TSMP-PDAF mype(w)=", mype_world, ": init_dim_obs_pdaf: dampfac_state_flexible=", dampfac_state_flexible
      end if
 
   end if
