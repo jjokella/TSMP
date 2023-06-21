@@ -211,6 +211,9 @@ SUBROUTINE init_dim_obs_pdaf(step, dim_obs_p)
      call mpi_bcast(dim_nx, 1, MPI_INTEGER, 0, comm_filter, ierror)
      call mpi_bcast(dim_ny, 1, MPI_INTEGER, 0, comm_filter, ierror)
   endif
+  ! broadcast damping factor flag
+  call mpi_bcast(is_dampfac_state_flexible, 1, MPI_INTEGER, 0, comm_filter, ierror)
+
   ! broadcast dampfac_state_flexible_in
   if(is_dampfac_state_flexible.eq.1) then
 
