@@ -1,73 +1,47 @@
 #! /bin/ksh
 
-initSetup(){
-  defaultFDCLM="/p/scratch/cslts/shared_data/rcmod_TSMP-ref_SLTS/TestCases/nrw_5x/clm"
-  defaultFDCOS="/p/scratch/cslts/shared_data/rcmod_TSMP-ref_SLTS/TestCases/nrw_5x/cosmo"
-  defaultFDOAS="/p/scratch/cslts/shared_data/rcmod_TSMP-ref_SLTS/TestCases/nrw_5x/oasis3"
-  defaultFDPFL="/p/scratch/cslts/shared_data/rcmod_TSMP-ref_SLTS/TestCases/nrw_5x/parflow"
+static_files=/p/scratch/cslts/shared_data/rcmod_TSMP-ref_SLTS/TestCases/nrw_5x
 
-  defaultNLCLM=$rootdir/bldsva/setups/nrw_5x/lnd.stdin 
-  defaultNLCOS=$rootdir/bldsva/setups/nrw_5x/lmrun_uc 
-  defaultNLPFL=$rootdir/bldsva/setups/nrw_5x/coup_oas.tcl
-  defaultNLDA=$rootdir/bldsva/setups/nrw_5x/enkfpf.par
+Npp=24
 
-  defaultNppn=24
-  defaultCLMProcX=4
-  defaultCLMProcY=24
-  defaultCOSProcX=1
-  defaultCOSProcY=1
-  defaultPFLProcX=1
-  defaultPFLProcY=1
-  
-  defaultStartDate="2016-01-01 00"
-  defaultInitDate="2016-01-02 00"
-  defaultRunhours=24
+PFLProcX=1
+PFLProcY=1
+CLMProcX=4
+CLMProcY=24
+COSProcX=1
+COSProcY=1
 
-  defaultDumpCLM=1
-  defaultDumpCOS=1
-  defaultDumpPFL=1	
+StartDate="2016-01-01 00"
+InitDate="2016-01-02 00"
 
-  gx_clm=300
-  gy_clm=300
-  dt_clm=1800
-  res="0300x0300"
+DumpCLM=1
+DumpCOS=1
+DumpPFL=1	
 
-  gx_cos=150
-  gy_cos=150
-  dt_cos=10
-  nbndlines=4
+Runhours=24
 
-  gx_pfl=300
-  gy_pfl=300
-  dt_pfl=0.25
-  pflrunname="rurlaf"
-  base_pfl=0.0025
+gxCLM=300
+gyCLM=300
+dtCLM=1800
+resCLM="0300x0300"
 
-  cplfreq1=900
-  cplfreq2=900
+gxCOS=150
+gyCOS=150
+dtCOS=10
+nboundlinesCOS=4
 
-  delta_obs=1
- 
-#  if [[ $withPFL == "false" && $withCOS == "true" ]]; then
-#    if [[ $cplscheme == "false" ]]; then
-#      defaultNLOAS=$rootdir/bldsva/data_oas3/namcouple_cos_clm_a1
-#    else
-#      defaultNLOAS=$rootdir/bldsva/data_oas3/namcouple_cos_clm
-#    fi
-#  fi
-#  if [[ $withPFL == "true" && $withCOS == "false" ]]; then
-#    defaultNLOAS=$rootdir/bldsva/data_oas3/namcouple_pfl_clm
-#  fi
-#  if [[ $withPFL == "true" && $withCOS == "true" ]]; then
-#    if [[ $cplscheme == "false" ]]; then
-#      defaultNLOAS=$rootdir/bldsva/data_oas3/namcouple_cos_clm_pfl_a1
-#    else
-#      defaultNLOAS=$rootdir/bldsva/data_oas3/namcouple_cos_clm_pfl
-#    fi
-#  fi
+gxPFL=300
+gyPFL=300
+dtPFL=0.25
+runnamePFL="rurlaf"
+basePFL=0.0025
 
 
-}
+freq1OAS=900
+freq2OAS=900
+
+deltaobs=1
+
 
 finalizeSetup(){
 route "${cyellow}>> finalizeSetup${cnormal}"
