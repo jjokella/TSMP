@@ -1344,7 +1344,7 @@ void enkf_printmannings(char *pre, char *suff){
 
 
 void update_parflow (int do_pupd) {
-  int i,j;
+  int i,j,k;
   VectorUpdateCommHandle *handle;
 
   if(pf_paramupdate == 3 && do_pupd){
@@ -1397,16 +1397,14 @@ void update_parflow (int do_pupd) {
     FinalizeVectorUpdate(handle);
 
     /* update perm_yy and perm_zz */
-    for(i=nshift,j=0;i<(nshift+pf_paramvecsize);i++,j++){
-        if((j%2)==0){
-	  if(pf_aniso_use_parflow == 1){
-	    subvec_param[j] = pf_statevec[i] * arr_aniso_perm_yy[j];
-	    subvec_param[j+1] = pf_statevec[i] * arr_aniso_perm_zz[j];
-	  }else{
-	    subvec_param[j] = pf_statevec[i] * pf_aniso_perm_y;
-	    subvec_param[j+1] = pf_statevec[i] * pf_aniso_perm_z;
-	  }
-        }
+    for(i=nshift,j=0,k=0;i<(nshift+pf_paramvecsize);i=i+2,j=j+2,k++){
+      if(pf_aniso_use_parflow == 1){
+	subvec_param[j] = pf_statevec[i] * arr_aniso_perm_yy[k];
+	subvec_param[j+1] = pf_statevec[i] * arr_aniso_perm_zz[k];
+      }else{
+	subvec_param[j] = pf_statevec[i] * pf_aniso_perm_y;
+	subvec_param[j+1] = pf_statevec[i] * pf_aniso_perm_z;
+      }
     }
 
     ENKF2PF_2P(perm_yy,perm_zz,subvec_param);
@@ -1507,11 +1505,11 @@ void update_parflow (int do_pupd) {
     FinalizeVectorUpdate(handle);
 
     /* update perm_yy and perm_zz*/
-    for(i=nshift,j=0;i<(nshift+pf_paramvecsize);i=i+4,j=j+4){
+    for(i=nshift,j=0,k=0;i<(nshift+pf_paramvecsize);i=i+4,j=j+4,k++){
         subvec_param[j] = pf_statevec[i];
 	  if(pf_aniso_use_parflow == 1){
-	    subvec_param[j+1] = pf_statevec[i] * arr_aniso_perm_yy[j];
-	    subvec_param[j+2] = pf_statevec[i] * arr_aniso_perm_zz[j];
+	    subvec_param[j+1] = pf_statevec[i] * arr_aniso_perm_yy[k];
+	    subvec_param[j+2] = pf_statevec[i] * arr_aniso_perm_zz[k];
 	  }else{
 	    subvec_param[j+1] = pf_statevec[i] * pf_aniso_perm_y;
 	    subvec_param[j+2] = pf_statevec[i] * pf_aniso_perm_z;
@@ -1659,10 +1657,10 @@ void update_parflow (int do_pupd) {
     FinalizeVectorUpdate(handle);
 
     /* update perm_yy */
-    for(i=nshift,j=0;i<(nshift+enkf_subvecsize);i++,j++){
+    for(i=nshift,j=0,k=0;i<(nshift+enkf_subvecsize);i++,j++,k++){
 
       if(pf_aniso_use_parflow == 1){
-	subvec_param[j] = pf_statevec[i] * arr_aniso_perm_yy[j];
+	subvec_param[j] = pf_statevec[i] * arr_aniso_perm_yy[k];
       }else{
 	subvec_param[j] = pf_statevec[i] * pf_aniso_perm_y;
       }
@@ -1685,9 +1683,9 @@ void update_parflow (int do_pupd) {
     FinalizeVectorUpdate(handle);
 
     /* update perm_zz */
-    for(i=nshift,j=0;i<(nshift+enkf_subvecsize);i++,j++){
+    for(i=nshift,j=0,k=0;i<(nshift+enkf_subvecsize);i++,j++,k++){
       if(pf_aniso_use_parflow == 1){
-	subvec_param[j] = pf_statevec[i] * arr_aniso_perm_zz[j];
+	subvec_param[j] = pf_statevec[i] * arr_aniso_perm_zz[k];
       }else{
 	subvec_param[j] = pf_statevec[i] * pf_aniso_perm_z;
       }
@@ -1807,17 +1805,17 @@ void update_parflow (int do_pupd) {
     FinalizeVectorUpdate(handle);
 
     /* update perm_yy and perm_zz*/
-    for(i=nshift,j=0;i<(nshift+pf_paramvecsize);i=i+3,j=j+3){
-        if((j%2)==0){
+    for(i=nshift,j=0,k=0;i<(nshift+pf_paramvecsize);i=i+3,j=j+3,k++){
+        /* if((j%2)==0){ */
             subvec_param[j] = pf_statevec[i];
 	    if(pf_aniso_use_parflow == 1){
-	      subvec_param[j+1] = pf_statevec[i] * arr_aniso_perm_yy[j];
-	      subvec_param[j+2] = pf_statevec[i] * arr_aniso_perm_zz[j];
+	      subvec_param[j+1] = pf_statevec[i] * arr_aniso_perm_yy[k];
+	      subvec_param[j+2] = pf_statevec[i] * arr_aniso_perm_zz[k];
 	    }else{
 	      subvec_param[j+1] = pf_statevec[i] * pf_aniso_perm_y;
 	      subvec_param[j+2] = pf_statevec[i] * pf_aniso_perm_z;
 	    }
-        }
+        /* } */
     }
 
     ENKF2PF_3P(perm_xx,perm_yy,perm_zz,subvec_param);
