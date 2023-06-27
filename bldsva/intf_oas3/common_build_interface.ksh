@@ -615,25 +615,6 @@ route "${cyellow}<<< c_make_pfl${cnormal}"
 
 c_substitutions_pfl(){
 route "${cyellow}>>> c_substitutions_pfl${cnormal}"
-
-    if [[ $withPDAF == "true" ]]; then
-
-      # comment "    sed DA amps into CMakeLists.txt"
-      #   sed "s/PARFLOW_AMPS_LAYER PROPERTY STRINGS seq/PARFLOW_AMPS_LAYER PROPERTY STRINGS da seq/g" -i $pfldir/CMakeLists.txt >> $log_file 2>> $err_file
-      # check
-      comment "    copy fix for PDAF into $pfldir"
-        patch $rootdir/bldsva/intf_DA/pdaf/tsmp/${mList[3]}/parflow_proto.h $pfldir/pfsimulator/parflow_lib 
-      check
-        patch $rootdir/bldsva/intf_DA/pdaf/tsmp/${mList[3]}/solver_richards.c $pfldir/pfsimulator/parflow_lib 
-      check
-        patch $rootdir/bldsva/intf_DA/pdaf/tsmp/${mList[3]}/problem_saturation.c $pfldir/pfsimulator/parflow_lib
-      check
-        patch $rootdir/bldsva/intf_DA/pdaf/tsmp/${mList[3]}/problem_phase_rel_perm.c $pfldir/pfsimulator/parflow_lib
-      check
-      #   patch $rootdir/bldsva/intf_DA/pdaf/tsmp/${mList[3]}/da $pfldir/pfsimulator/amps
-      # check
-    fi
-
 route "${cyellow}<<< c_substitutions_pfl${cnormal}"
 }
 
