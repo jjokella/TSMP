@@ -2021,6 +2021,28 @@ void update_parflow () {
       nshift = enkf_subvecsize;
     }
 
+    /* River masking for parameter update */
+    if(pf_olfmasking_param == 1){
+
+      int izero = 0;
+      int ishift = nshift;
+
+      /* fast-forward counters to uppermost model layer */
+      izero += nx_local*ny_local*(nz_local-1);
+      ishift += nx_local*ny_local*(nz_local-1);
+
+      /* mask updated parameter values in uppermost model layer */
+      for(i=0;i<ny_local;i++){
+	for(j=0;j<nx_local;j++){
+	  //if(subvec_p[ishift]>0.0) pf_statevec[izero] = subvec_param[izero];
+	  pf_statevec[ishift] = subvec_param[izero];
+	  ishift++;
+	  izero++;
+	}
+      }
+
+    }
+
     /* update perm_xx */
     for(i=nshift,j=0;i<(nshift+enkf_subvecsize);i++,j++)
       subvec_param[j] = pf_statevec[i];

@@ -42,6 +42,7 @@ printstat          =
 paramprintensemble =
 paramprintstat     =
 olfmasking         =
+olfmasking_param   =
 
 [CLM]
 problemname = ""
@@ -289,6 +290,18 @@ the cell which is saturated. Option \"1\" means that all saturated
 cells at surface are not used for an update. Option \"2\" reads a pfb
 for masking the stream.
 
+### PF:olfmasking_param ###
+
+`PF:olfmasking_param`: (integer) Only used in case you do not want to
+update the parameters from the EnKF state vector on certain grid-cells
+during DA with pdaf. eg. not update the cell which is
+saturated.
+
+Option \"1\" means that all saturated cells at surface are not used
+for an update. Only implemented for `PF:paramupdate==1`.
+
+NOT YET IMPLEMENTED: Option \"2\" reads a pfb for masking the stream.
+
 ## [CLM] ##
 
 ### CLM:problemname ###
@@ -491,6 +504,7 @@ Effect of `obs_interp_switch=1`:
  |           | `paramprintensemble`    | 1             |
  |           | `paramprintstat`        | 1             |
  |           | `olfmasking`            | 0             |
+ |           | `olfmasking_param`      | 0             |
  | `[CLM]`   |                         |               |
  |           | `problemname`           | \-            |
  |           | `nprocs`                | 0             |
