@@ -465,8 +465,8 @@ void parflow_oasis_init(double current_time, double dt) {
      ParFlow arrays */
   subvec_permy           = (double*) calloc(pf_paramvecsize,sizeof(double));
   subvec_permz           = (double*) calloc(pf_paramvecsize,sizeof(double));
-  arr_aniso_perm_yy           = (double*) calloc(pf_paramvecsize,sizeof(double));
-  arr_aniso_perm_zz           = (double*) calloc(pf_paramvecsize,sizeof(double));
+  arr_aniso_perm_yy           = (double*) calloc(enkf_subvecsize,sizeof(double));
+  arr_aniso_perm_zz           = (double*) calloc(enkf_subvecsize,sizeof(double));
 
   if(pf_gwmasking > 0){
     subvec_gwind           = (double*) calloc(enkf_subvecsize,sizeof(double));
