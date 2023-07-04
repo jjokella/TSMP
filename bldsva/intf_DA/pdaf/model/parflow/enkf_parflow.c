@@ -2020,6 +2020,7 @@ void update_parflow () {
     }else{
       nshift = enkf_subvecsize;
     }
+    printf("TSMP-PDAF-WRAPPER mype(w)=%d: paramupdated 1 \n",mype_world);
 
     /* River masking for parameter update */
     if(pf_olfmasking_param == 1){
@@ -2027,9 +2028,14 @@ void update_parflow () {
       int izero = 0;
       int ishift = nshift;
 
+      printf("TSMP-PDAF-WRAPPER mype(w)=%d: olfmasking_param 1 \n",mype_world);
+
       /* fast-forward counters to uppermost model layer */
       izero += nx_local*ny_local*(nz_local-1);
       ishift += nx_local*ny_local*(nz_local-1);
+
+      printf("TSMP-PDAF-WRAPPER mype(w)=%d: izero(start)=%d \n",mype_world, izero);
+      printf("TSMP-PDAF-WRAPPER mype(w)=%d: ishift(start)=%d \n",mype_world, ishift);
 
       /* mask updated parameter values in uppermost model layer */
       for(i=0;i<ny_local;i++){
