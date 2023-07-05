@@ -748,9 +748,9 @@ void enkfparflowadvance(int tcycle, double current_time, double dt)
 	     /* Array loop */
 	     /* Set arr_aniso_perm_yy / arr_aniso_perm_zz */
 	     /* TODO: Compute only for first update */
-	     for(i=0;i<enkf_subvecsize;i++){
-	       arr_aniso_perm_yy[i] = subvec_permy[i] / subvec_param[i];
-	       arr_aniso_perm_zz[i] = subvec_permz[i] / subvec_param[i];
+	     for(i=0,j=0;i<enkf_subvecsize;i++,j=j+2){
+	       arr_aniso_perm_yy[i] = subvec_permy[i] / subvec_param[j];
+	       arr_aniso_perm_zz[i] = subvec_permz[i] / subvec_param[j];
 	     }
 	   }
 
@@ -789,9 +789,9 @@ void enkfparflowadvance(int tcycle, double current_time, double dt)
 	     /* Array loop */
 	     /* Set arr_aniso_perm_yy / arr_aniso_perm_zz */
 	     /* TODO: Compute only for first update */
-	     for(i=0;i<enkf_subvecsize;i++){
-	       arr_aniso_perm_yy[i] = subvec_permy[i] / subvec_param[i];
-	       arr_aniso_perm_zz[i] = subvec_permz[i] / subvec_param[i];
+	     for(i=0,j=0;i<enkf_subvecsize;i++,j=j+3){
+	       arr_aniso_perm_yy[i] = subvec_permy[i] / subvec_param[j];
+	       arr_aniso_perm_zz[i] = subvec_permz[i] / subvec_param[j];
 	     }
 	   }
 
@@ -855,9 +855,9 @@ void enkfparflowadvance(int tcycle, double current_time, double dt)
 	     /* Array loop */
 	     /* Set arr_aniso_perm_yy / arr_aniso_perm_zz */
 	     /* TODO: Compute only for first update */
-	     for(i=0;i<enkf_subvecsize;i++){
-	       arr_aniso_perm_yy[i] = subvec_permy[i] / subvec_param[i];
-	       arr_aniso_perm_zz[i] = subvec_permz[i] / subvec_param[i];
+	     for(i=0,j=0;i<enkf_subvecsize;i++,j=j+4){
+	       arr_aniso_perm_yy[i] = subvec_permy[i] / subvec_param[j];
+	       arr_aniso_perm_zz[i] = subvec_permz[i] / subvec_param[j];
 	     }
 	   }
 
