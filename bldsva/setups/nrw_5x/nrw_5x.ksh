@@ -56,7 +56,6 @@ fi
 if [[ $rundir == "" ]] then
    rundir="$rootdir/run/${platform}_${combination}_${refSetup}"
 fi
-   rundir="${rundir}${exp_id}"
 # End setting rundir
 
 comment "copy PDAF files into rundir"
