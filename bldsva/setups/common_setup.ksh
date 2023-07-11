@@ -60,9 +60,11 @@ initSetup(){
 
   cplfreq1=$freq1OAS
   cplfreq2=$freq2OAS
-  
-  delta_obs=$deltaobs
 
+  # Set PDAF specific variables
+  if [[ $withPDAF == "true" ]] ; then
+    pdaf_delt_obs=$deltaobs
+  fi
 
   if [[ $withPFL == "false" && $withCOS == "true" ]]; then
     if [[ $cplscheme == "false" ]]; then
