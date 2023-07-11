@@ -1,7 +1,7 @@
 #! /bin/ksh
 
 static_files=/p/scratch/cslts/shared_data/rcmod_TSMP-ref_SLTS/TestCases/nrw_5x
-
+namelist_da=$rootdir/bldsva/setups/$refSetup/enkfpf.par
 Npp=24
 
 PFLProcX=1
@@ -56,6 +56,7 @@ fi
 if [[ $rundir == "" ]] then
    rundir="$rootdir/run/${platform}_${combination}_${refSetup}"
 fi
+mkdir -p $rundir
 # End setting rundir
 
 comment "copy PDAF files into rundir"
