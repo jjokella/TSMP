@@ -42,6 +42,18 @@ freq2OAS=900
 
 deltaobs=1
 
+# Setting rundir as in general setup
+# This should be removed, once rundir is not needed anymore in the setup script
+if [[ $exp_id == "__DATE__" ]] then
+   exp_id="_${date}"
+fi
+
+if [[ $rundir == "" ]] then
+   rundir="$rootdir/run/${platform}_${combination}_${refSetup}"
+fi
+   rundir="${rundir}${exp_id}"
+# End setting rundir
+
 comment "copy PDAF files into rundir"
 cp $rootdir/bldsva/setups/nrw_5x/create_ensemble_namelists.py $rundir
 check
