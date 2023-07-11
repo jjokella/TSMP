@@ -63,7 +63,12 @@ initSetup(){
 
   # Set PDAF specific variables
   if [[ $withPDAF == "true" ]] ; then
-    pdaf_delt_obs=$deltaobs
+    pdaf_screen=$pdaf_screen_in
+    pdaf_filtertype=$pdaf_filtertype_in
+    pdaf_subtype=$pdaf_subtype_in
+    pdaf_delt_obs=$pdaf_delt_obs_in
+    pdaf_rms_obs=$pdaf_rms_obs_in
+    pdaf_obs_filename=$pdaf_obs_filename_in
   fi
 
   if [[ $withPFL == "false" && $withCOS == "true" ]]; then

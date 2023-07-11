@@ -40,7 +40,12 @@ basePFL=0.0025
 freq1OAS=900
 freq2OAS=900
 
-deltaobs=1
+pdaf_screen_in=3
+pdaf_filtertype_in=2
+pdaf_subtype_in=1
+pdaf_delt_obs_in=1
+pdaf_rms_obs_in=0.02
+pdaf_obs_filename_in="/p/scratch/cslts/shared_data/rcmod_TSMP-ref_SLTS/TestCases/nrw_5x/pdaf/obs/swc_obs"
 
 # Setting rundir as in general setup
 # This should be removed, once rundir is not needed anymore in the setup script
