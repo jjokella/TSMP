@@ -42,12 +42,6 @@ freq2OAS=900
 
 deltaobs=1
 
-
-finalizeSetup(){
-route "${cyellow}>> finalizeSetup${cnormal}"
-
-if [[ $withPDAF == "true" ]]; then
-
 comment "copy PDAF files into rundir"
 cp $rootdir/bldsva/setups/nrw_5x/create_ensemble_namelists.py $rundir
 check
@@ -78,51 +72,8 @@ check
 chmod +x $rundir/clm5pdaf_run.bsh >> $log_file 2>> $err_file
 check
 
+comment "Make necessary directories for CLM5 logs"
 mkdir -p $rundir/timing/checkpoints
 check
 mkdir  $rundir/logs
 check
-
-else
-comment " create CLM5 specific run script "
-
-cat << EOF >> $rundir/tsmp_clm_run.bsh
-#!/bin/bash
-
-#SBATCH --job-name="TerrSysMP"
-#SBATCH --nodes=12
-#SBATCH --ntasks-per-node=24
-#SBATCH --cpus-per-task=1
-#SBATCH --output=out-clm5_std.%j
-#SBATCH --error=err-clm5_std.%j
-#SBATCH --time=01:00:00
-#SBATCH --partition=batch
-#SBATCH --mail-type=NONE
-#SBATCH --account=slts
-
-cd $rundir 
-source $rundir/loadenvs
-date
-echo "started" > started.txt
-datefmt=\`date +%d%m%y-%H%M%S\`
-for fname in atm cpl esp glc ice rof ocn wav; do
-sed -i 's/.*logfile.*/  logfile = "'\${fname}'.log.'\${datefmt}'"/' \${fname}_modelio.nml ;
-done
-srun clm >> cesm.log.\$datefmt 2>&1
-date
-echo "ready" > ready.txt
-exit 0
-EOF
-
-check
-chmod +x $rundir/tsmp_clm_run.bsh >> $log_file 2>> $err_file  
-check
-
-mkdir -p $rundir/timing/checkpoints
-check
-
-mkdir $rundir/logs
-
-fi
-route "${cyellow}<< finalizeSetup${cnormal}"
-}
