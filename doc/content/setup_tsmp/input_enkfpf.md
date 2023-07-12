@@ -306,11 +306,14 @@ update the parameters from the EnKF state vector on certain grid-cells
 during DA with pdaf. eg. not update the cell which is
 saturated. Masked cells are not used for the parameter update.
 
-- Option \"1\" means that all saturated cells at surface are not used
-  for an update. Only implemented for `PF:paramupdate==1`.
+- Option \"1\" All cells at surface are masked. Only implemented for
+  `PF:paramupdate==1`.
 
 - NOT YET IMPLEMENTED: Option \"2\" reads a pfb for masking the
   stream.
+
+- Option \"3\": All saturated cells at surface are masked. Only
+  implemented for `PF:paramupdate==1`; `PF:updateflag` `1` or `3`.
 
 ## [CLM] ##
 

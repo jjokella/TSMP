@@ -2022,9 +2022,10 @@ void update_parflow () {
     }
 
     /* River masking for permeability update */
-    if(pf_olfmasking_param == 1){
+    if(pf_olfmasking_param == 1 || pf_olfmasking_param == 3){
 
       int izero = 0;
+      /* ishift implements the index shift nshift in pf_statevec */
       int ishift = nshift;
 
       /* fast-forward counters to uppermost model layer */
@@ -2034,8 +2035,17 @@ void update_parflow () {
       /* mask updated parameter values in uppermost model layer */
       for(i=0;i<ny_local;i++){
 	for(j=0;j<nx_local;j++){
-	  //if(subvec_p[ishift]>0.0) pf_statevec[izero] = subvec_param[izero];
-	  pf_statevec[ishift] = subvec_param[izero];
+	  if(pf_olfmasking == 1){
+	    pf_statevec[ishift] = subvec_param[izero];
+	  }
+	  else if(pf_olfmasking == 3){
+	    if(pf_updateflag == 1 || pf_updateflag == 3){
+	      if(subvec_p[izero]>0.0) pf_statevec[ishift] = subvec_param[izero];
+	    }else{
+	      printf("Error (update_parflow): pf_olfmasking_param = 3 requires pf_updateflag = 1 or 3\n");
+	      exit(1);
+	    }
+	  }
 	  ishift++;
 	  izero++;
 	}
