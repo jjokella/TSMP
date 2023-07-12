@@ -1922,7 +1922,7 @@ void update_parflow () {
     FinalizeVectorUpdate(handle);
   }
 
-  if(pf_olfmasking == 1) mask_overlandcells();
+  if(pf_olfmasking == 1 || pf_olfmasking == 3) mask_overlandcells();
   if(pf_olfmasking == 2) mask_overlandcells_river();
 
   if(pf_updateflag == 1) {
@@ -2250,18 +2250,26 @@ void mask_overlandcells()
   if(pf_updateflag == 1){
     for(i=0;i<ny_local;i++){
       for(j=0;j<nx_local;j++){
-        //if(subvec_p[counter]>0.0) pf_statevec[counter] = subvec_p[counter];
-        pf_statevec[counter] = subvec_p[counter];
-        counter++;
+	if(pf_olfmasking == 1){
+	  pf_statevec[counter] = subvec_p[counter];
+	}
+	else if(pf_olfmasking == 3){
+	  if(subvec_p[counter]>0.0) pf_statevec[counter] = subvec_p[counter];
+	}
+	counter++;
       }
     }
     if(pf_gwmasking == 2){   //There are overland cells being unsat (by hcp)
       counter = nx_local*ny_local*(nz_local-1);
       for(i=0;i<ny_local;i++){
         for(j=0;j<nx_local;j++){
-          //if(subvec_p[counter]>0.0) pf_statevec[counter] = subvec_p[counter];
           if(subvec_gwind[counter] < 0.5){
-             pf_statevec[counter] = subvec_sat[counter]*subvec_porosity[counter];
+	    if(pf_olfmasking == 1){
+	      pf_statevec[counter] = subvec_sat[counter]*subvec_porosity[counter];
+	    }
+	    else if(pf_olfmasking == 3){
+	      if(subvec_p[counter]>0.0) pf_statevec[counter] = subvec_sat[counter]*subvec_porosity[counter];
+	    }
           }
           counter++;
         }
@@ -2271,8 +2279,8 @@ void mask_overlandcells()
   if(pf_updateflag == 2){
     for(i=0;i<ny_local;i++){
       for(j=0;j<nx_local;j++){
-        //if(subvec_p[counter]>0.0) pf_statevec[counter] = subvec_sat[counter]*subvec_porosity[counter];
         pf_statevec[counter] = subvec_sat[counter]*subvec_porosity[counter];
+        //if(condition on saturations) pf_statevec[counter] = subvec_sat[counter]*subvec_porosity[counter];
         counter++;
       }
     }
@@ -2280,8 +2288,12 @@ void mask_overlandcells()
   if(pf_updateflag == 3){
     for(i=0;i<ny_local;i++){
       for(j=0;j<nx_local;j++){
-        //if(subvec_p[counter]>0.0) pf_statevec[counter+enkf_subvecsize] = subvec_p[counter];
-        pf_statevec[counter+enkf_subvecsize] = subvec_p[counter];
+	if(pf_olfmasking == 1){
+	  pf_statevec[counter+enkf_subvecsize] = subvec_p[counter];
+	}
+	else if(pf_olfmasking == 3){
+	  if(subvec_p[counter]>0.0) pf_statevec[counter+enkf_subvecsize] = subvec_p[counter];
+	}
         counter++;
       }
     }

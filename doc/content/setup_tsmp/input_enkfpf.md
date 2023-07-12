@@ -286,21 +286,31 @@ f.e.  `param.ksat`, `param.mannings` or `param.poro`.
 
 `PF:olfmasking`: (integer) Only used in case you do not want to update
 the state on certain grid-cells during DA with pdaf. eg. not update
-the cell which is saturated. Option \"1\" means that all saturated
-cells at surface are not used for an update. Option \"2\" reads a pfb
-for masking the stream.
+the cell which is saturated. Masked cells are not used for the state
+update.
+
+- Option \"1\": All cells at surface are masked.
+
+- Option \"2\" reads a pfb of masked cells (use-case:
+  rivers/streams). The full soil column below the masked cells is not
+  updated!
+
+- Option \"3\": All saturated cells at surface are masked. Only
+  implemented, when pressure is in the state vector,
+  i.e. `PF:updateflag` is `1` or `3`.
 
 ### PF:olfmasking_param ###
 
 `PF:olfmasking_param`: (integer) Only used in case you do not want to
 update the parameters from the EnKF state vector on certain grid-cells
 during DA with pdaf. eg. not update the cell which is
-saturated.
+saturated. Masked cells are not used for the parameter update.
 
-Option \"1\" means that all saturated cells at surface are not used
-for an update. Only implemented for `PF:paramupdate==1`.
+- Option \"1\" means that all saturated cells at surface are not used
+  for an update. Only implemented for `PF:paramupdate==1`.
 
-NOT YET IMPLEMENTED: Option \"2\" reads a pfb for masking the stream.
+- NOT YET IMPLEMENTED: Option \"2\" reads a pfb for masking the
+  stream.
 
 ## [CLM] ##
 
