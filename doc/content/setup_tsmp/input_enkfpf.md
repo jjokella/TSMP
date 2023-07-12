@@ -43,6 +43,7 @@ paramprintensemble =
 paramprintstat     =
 olfmasking         =
 olfmasking_param   =
+olfmasking_depth   =
 
 [CLM]
 problemname = ""
@@ -314,6 +315,11 @@ saturated. Masked cells are not used for the parameter update.
 
 - Option \"3\": All saturated cells at surface are masked. Only
   implemented for `PF:paramupdate==1`; `PF:updateflag` `1` or `3`.
+
+### PF:olfmasking_depth ###
+
+`PF:olfmasking_depth`: (integer) Number of layers (counted from
+surface) to mask in overland flow river masking. Default: 1.
 
 ## [CLM] ##
 
