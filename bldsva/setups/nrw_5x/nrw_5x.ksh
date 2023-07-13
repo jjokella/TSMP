@@ -47,17 +47,9 @@ pdaf_delt_obs_in=1
 pdaf_rms_obs_in=0.02
 pdaf_obs_filename_in="/p/scratch/cslts/shared_data/rcmod_TSMP-ref_SLTS/TestCases/nrw_5x/pdaf/obs/swc_obs"
 
-# Setting rundir as in general setup
-# This should be removed, once rundir is not needed anymore in the setup script
-if [[ $exp_id == "__DATE__" ]] then
-   exp_id="_${date}"
-fi
 
-if [[ $rundir == "" ]] then
-   rundir="$rootdir/run/${platform}_${combination}_${refSetup}"
-fi
-mkdir -p $rundir
-# End setting rundir
+finalizeSetupNRW5x(){
+route "${cyellow}>> finalizeSetupNRW5x${cnormal}"
 
 comment "copy PDAF files into rundir"
 cp $rootdir/bldsva/setups/nrw_5x/create_ensemble_namelists.py $rundir
@@ -94,3 +86,5 @@ mkdir -p $rundir/timing/checkpoints
 check
 mkdir  $rundir/logs
 check
+route "${cyellow}<< finalizeSetupNRW5x${cnormal}"
+}

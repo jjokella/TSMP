@@ -1613,6 +1613,9 @@ check
 #DA
   if [[ $withPDAF == "true" ]] ; then
     setup_da
+    if [[ ${refSetup} == "nrw_5x" ]]; then
+      finalizeSetupNRW5x
+    fi
     finalizeSetup
   fi
 
