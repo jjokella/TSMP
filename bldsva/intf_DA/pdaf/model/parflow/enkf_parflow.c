@@ -1365,7 +1365,9 @@ void update_parflow () {
 	    dat[i] = subvec_p[i] + pf_dampfac_state * (dat[i] - subvec_p[i]);
 	  }
 	  else if(subvec_gwind[i] == 0.0){
-	    dat[i] = subvec_sat[i] * subvec_porosity[i] + pf_dampfac_state * (dat[i] - subvec_sat[i] * subvec_porosity[i]);
+	    if(pf_dampmask_sm == 0){
+	      dat[i] = subvec_sat[i] * subvec_porosity[i] + pf_dampfac_state * (dat[i] - subvec_sat[i] * subvec_porosity[i]);
+	    }
 	  }
 	  else{
 	    printf("ERROR: pf_gwmasking = 2, but subvec_gwind is neither 0.0 nor 1.0\n");

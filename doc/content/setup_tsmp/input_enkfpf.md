@@ -34,6 +34,7 @@ paramupdate        =
 paramupdate_frequency =
 dampingfactor_param =
 dampingfactor_state =
+damping_masking_sm =
 aniso_perm_y       =
 aniso_perm_z       =
 aniso_use_parflow  =
@@ -211,6 +212,15 @@ x_{update, damped} &= x + \mathtt{dampingfactor\_state} \cdot ( x_{update} - x )
 where $x$ is the state vector (without parameters) before assimilation
 and $x_{update}$ is the state vector after the assimilation.
 
+### PF:damping_masking_sm ###
+`PF:damping_masking_sm`: (integer) Switch for applying damping factor
+for state updates to soil moisture. Default `0`.
+
+General state damping is turned on by setting
+`PF:dampingfactor_state`.
+
+- `0`: State damping vector applies to soil moisture
+- `1`: State damping vector does not apply to soil moisture
 
 ### PF:aniso_perm_y ###
 
@@ -482,6 +492,7 @@ Effect of `obs_interp_switch=1`:
  |           | `paramupdate_frequency` | 1             |
  |           | `dampingfactor_param`   | 1.0           |
  |           | `dampingfactor_state`   | 1.0           |
+ |           | `damping_masking_sm`    | 0             |
  |           | `aniso_perm_y`          | 1.0           |
  |           | `aniso_perm_z`          | 1.0           |
  |           | `aniso_use_parflow`     | 0             |

@@ -96,6 +96,7 @@ GLOBAL int pf_printgwmask;
 GLOBAL int pf_freq_paramupdate;
 GLOBAL int pf_aniso_use_parflow;
 GLOBAL int is_dampfac_state_flexible;
+GLOBAL int pf_dampmask_sm;
 extern int model;
 extern int mype_model;
 extern int npes_model;
