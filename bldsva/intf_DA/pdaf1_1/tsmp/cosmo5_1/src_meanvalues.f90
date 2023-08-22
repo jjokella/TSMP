@@ -246,6 +246,7 @@ USE data_parallel,      ONLY :  &
                        ! lines of the subdomains
     my_cart_id,      & ! rank of this subdomain in the global communicator
     icomm_cart,      & ! communicator that belongs to the cartesian grid
+    cosmo_input_suffix, & !For ENS Setup bsc
     imp_reals          ! determines the correct REAL type used in the model
                        ! for MPI
 
@@ -415,6 +416,8 @@ REAL (KIND=wp),     POINTER :: &
 
   IF (my_cart_id == 0) THEN
     ! file for mass and energy fields
+    !bsc change for ENS run
+    write(yuprmass,'(a,i5.5)') 'MA_',cosmo_input_suffix
     OPEN (nuprmass,FILE=yuprmass,FORM='FORMATTED',STATUS='REPLACE',IOSTAT=nstat)
     IF (nstat /= 0) THEN
         yerrmsg = 'opening of file YUPRMASS failed'
@@ -423,6 +426,7 @@ REAL (KIND=wp),     POINTER :: &
     REWIND nuprmass
 
     ! file for humidity fields
+    write(yuprhumi,'(a,i5.5)') 'HU_',cosmo_input_suffix
     OPEN (nuprhumi,FILE=yuprhumi,FORM='FORMATTED',STATUS='REPLACE',IOSTAT=nstat)
     IF (nstat /= 0) THEN
         yerrmsg = 'opening of file YUPRHUMI failed'

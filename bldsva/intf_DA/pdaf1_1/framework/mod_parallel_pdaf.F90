@@ -60,6 +60,7 @@ MODULE mod_parallel_pdaf
   INTEGER(c_int), bind(c) :: mype_filter ! PE rank in COMM_filter
   INTEGER(c_int), bind(c) :: npes_filter ! # PEs in COMM_filter
   INTEGER :: COMM_couple ! MPI communicator for coupling filter and model
+  INTEGER :: mype_couple, npes_couple ! # PEs and PE rank in COMM_couple
   LOGICAL :: modelpe     ! Whether we are on a PE in a COMM_model
   LOGICAL :: filterpe    ! Whether we are on a PE in a COMM_filter
   INTEGER :: task_id     ! Index of my model task (1,...,n_modeltasks)

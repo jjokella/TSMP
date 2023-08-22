@@ -52,7 +52,7 @@ SUBROUTINE next_observation_pdaf(stepnow, nsteps, doexit, time)
 !
 ! !USES:
   USE mod_assimilation, &
-       ONLY: delt_obs, toffset, screen
+       ONLY: delt_obs, toffset, step_TB, screen
   USE mod_parallel_model, &
        ONLY: mype_world, total_steps
   USE mod_assimilation, &
@@ -87,7 +87,13 @@ SUBROUTINE next_observation_pdaf(stepnow, nsteps, doexit, time)
 
   !kuw: check, for observation file with at least 1 observation
 !  counter = stepnow 
-  counter = stepnow 
+  !step_TB = stepnow 
+!  if (stepnow.EQ.0) then
+!    counter = stepnow + toffset !hcp introduce offset in time
+    counter = stepnow 
+!  else
+!    counter = stepnow 
+!  endif
   !nsteps  = 0
   if (mype_world==0 .and. screen > 2) then
       write(*,*) 'TSMP-PDAF (in next_observation_pdaf.F90) total_steps: ',total_steps
@@ -95,8 +101,8 @@ SUBROUTINE next_observation_pdaf(stepnow, nsteps, doexit, time)
   do
     !nsteps  = nsteps  + delt_obs 
     counter = counter + delt_obs
-    !if(counter>total_steps) exit
     if(counter>(total_steps+toffset)) exit
+!    if(counter>total_steps) exit
     write(fn, '(a, i5.5)') trim(obs_filename)//'.', counter
     call check_n_observationfile(fn,no_obs)
     if(no_obs>0) exit
@@ -106,8 +112,9 @@ SUBROUTINE next_observation_pdaf(stepnow, nsteps, doexit, time)
       write(*,*)'TSMP-PDAF (next_observation_pdaf.F90) stepnow: ',stepnow
       write(*,*)'TSMP-PDAF (next_observation_pdaf.F90) no_obs, nsteps, counter: ',no_obs,nsteps,counter
   end if
+  step_TB = counter
   !kuw end
-
+ 
 
 
 
@@ -139,5 +146,3 @@ SUBROUTINE next_observation_pdaf(stepnow, nsteps, doexit, time)
   !print *, "next_observation_pdaf finished"
 
 END SUBROUTINE next_observation_pdaf
-
-

@@ -556,6 +556,15 @@ void enkfparflowadvance(int tcycle, double current_time, double dt)
 	  for(i=0;i<enkf_subvecsize;i++) {
             pf_statevec[i] = subvec_sat[i] * subvec_porosity[i];
           }
+          double dz_glob=GetDouble("ComputationalGrid.DZ");  //hcp if crns update
+          int isc;
+          soilay = (double *) malloc(nz_glob * sizeof(double));
+          char key[IDB_MAX_KEY_LEN];
+          for (isc = 0; isc < nz_glob; isc++) {
+              sprintf(key, "Cell.%d.dzScale.Value", isc);
+              soilay[isc] = GetDouble(key);
+              soilay[isc] *= dz_glob;
+              }
 #ifdef FOR2131
           for(i=enkf_subvecsize,j=0;i<(2*enkf_subvecsize);i++,j++){
                pf_statevec[i] = subvec_p[j];
@@ -1497,7 +1506,7 @@ void update_parflow (int do_pupd) {
     for(i=nshift,j=0;i<(nshift+enkf_subvecsize);i++,j++)
       subvec_param[j] = pf_statevec[i];
 
-    if(pf_gwmasking == 0){
+    if(pf_gwmasking != 1){
       ENKF2PF(perm_xx,subvec_param);
     }
     // hcp gmasking with param
@@ -1517,7 +1526,7 @@ void update_parflow (int do_pupd) {
     for(i=nshift,j=0;i<(nshift+enkf_subvecsize);i++,j++)
       subvec_param[j] = pf_statevec[i] * pf_aniso_perm_y;
 
-    if(pf_gwmasking == 0){
+    if(pf_gwmasking != 1){
       ENKF2PF(perm_yy,subvec_param);
     }
     // hcp gmasking with param
@@ -1537,7 +1546,7 @@ void update_parflow (int do_pupd) {
     for(i=nshift,j=0;i<(nshift+enkf_subvecsize);i++,j++)
       subvec_param[j] = pf_statevec[i] * pf_aniso_perm_z;
 
-    if(pf_gwmasking == 0){
+    if(pf_gwmasking != 1){
       ENKF2PF(perm_zz,subvec_param);
     }
     // hcp gmasking with param

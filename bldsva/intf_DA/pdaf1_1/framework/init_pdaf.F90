@@ -54,7 +54,7 @@ SUBROUTINE init_pdaf()
         mpi_success, mpi_comm_world, mpi_integer, mype_model
     use mod_tsmp, &
         only: pf_statevecsize, nprocpf, tag_model_parflow, tag_model_clm, nprocclm, pf_statevec, pf_statevec_fortran, &
-        idx_map_subvec2state, idx_map_subvec2state_fortran
+        idx_map_subvec2state, idx_map_subvec2state_fortran, tag_model_cosmo
     USE mod_parallel_pdaf, &     ! Parallelization variables fro assimilation
         ONLY: n_modeltasks, task_id, COMM_filter, COMM_couple, filterpe
     USE mod_assimilation, &      ! Variables for assimilation
@@ -80,6 +80,10 @@ SUBROUTINE init_pdaf()
     use enkf_clm_mod, only: clm_statevecsize
 #endif
     ! kuw end
+
+#if (defined COUP_OAS_COS) && (!defined COUP_OAS_PFL)
+    USE enkf_cosmo_mod, ONLY: cos_statevecsize
+#endif
 
     use, intrinsic :: iso_c_binding
 
@@ -126,6 +130,69 @@ SUBROUTINE init_pdaf()
         WRITE (*,'(a)') 'TSMP-PDAF INITIALIZE PDAF - ONLINE MODE'
     END IF
 
+    ! *** Define state dimension ***
+
+    if (model == tag_model_parflow) then
+        !print *, "Parflow: converting pf_statevec to fortran"
+        call C_F_POINTER(pf_statevec, pf_statevec_fortran, [pf_statevecsize])
+        !print *, "Parflow: converting idx_mapping_subvec2state to fortran"
+        call C_F_POINTER(idx_map_subvec2state, idx_map_subvec2state_fortran, [pf_statevecsize])
+!        !print *, "Parflow: first several elements of the idx:", idx_map_subvec2state_fortran
+    end if
+
+    if (model == tag_model_parflow) then
+        dim_state_p = pf_statevecsize  ! Local state dimension
+        !print *,""
+        !print *, "Parflow component, setting correct dim_state_p and dim_state"
+    else
+        !print *,""
+        !print *, "CLM component, setting dummy dim_state_p and dim_state"
+        dim_state_p = 1  ! Local state dimension
+    end if
+
+#if defined CLMSA
+    if (model == tag_model_clm) then
+       !call get_proc_global(numg,numl,numc,nump)
+       !call get_proc_bounds(begg,endg,begl,endl,begc,endc,begp,endp)
+       !dim_state_p =  (endg-begg+1) * nlevsoi
+       !print *,"CLM: dim_state_p is ",dim_state_p
+       dim_state_p = clm_statevecsize
+    end if
+#endif
+
+#if (defined COUP_OAS_COS) && (!defined COUP_OAS_PFL)
+    if (model == tag_model_cosmo) then
+       !call get_proc_global(numg,numl,numc,nump)
+       !call get_proc_bounds(begg,endg,begl,endl,begc,endc,begp,endp)
+       !dim_state_p =  (endg-begg+1) * nlevsoi
+       !print *,"CLM: dim_state_p is ",dim_state_p
+       dim_state_p = cos_statevecsize
+    end if
+#endif
+
+    IF (allocated(dim_state_p_count)) deallocate(dim_state_p_count)
+    allocate(dim_state_p_count(npes_model))
+    call MPI_Gather(dim_state_p, 1, MPI_INTEGER, dim_state_p_count, 1, MPI_INTEGER, 0, comm_model, ierror)
+
+!    if (mype_model == 0) print *, "init_pdaf: dim_state_p_count in modified: ", dim_state_p_count
+    IF (allocated(dim_state_p_stride)) deallocate(dim_state_p_stride)
+    allocate(dim_state_p_stride(npes_model))
+    do i = 1, npes_model
+        dim_state_p_stride(i) = 0
+        do j = 1, i - 1
+            dim_state_p_stride(i) = dim_state_p_count(j) + dim_state_p_stride(i)
+        end do
+    end do
+!    if (mype_model == 0) print *, "init_pdaf: dim_state_p_stride in modified: ", dim_state_p_stride
+
+    if (mype_model == 0) then
+        dim_state = sum(dim_state_p_count)
+    end if
+    call MPI_BCAST(dim_state, 1, MPI_INTEGER, 0, comm_model, IERROR)
+    !print  *, "my local state vector dimension is :" , dim_state_p
+    !print  *, "my global state vector dimension is :" , dim_state
+    !print *,""
+    call MPI_Barrier(MPI_COMM_WORLD, ierror)
     ! **********************************************************
     ! ***               CONTROL OF PDAF                      ***
     ! **********************************************************
