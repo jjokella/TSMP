@@ -43,13 +43,19 @@ program pdaf_terrsysmp
 
 #if (defined CLMSA)
     ! use enkf_clm_mod, only: statcomm
-    use enkf_clm_mod, only: update_clm, clmupdate_swc, clmprint_et
+    use enkf_clm_mod, only: update_clm, clmupdate_swc, clmupdate_T, clmprint_et
     use mod_clm_statistics
 #elif (defined COUP_OAS_PFL || defined COUP_OAS_COS)
 !#else
     ! use enkf_clm_mod,only: statcomm,
     use enkf_clm_mod, only: clmprint_et
     use mod_clm_statistics
+#endif
+
+#if (defined COUP_OAS_COS)
+    ! use data_parallel, only: cosmo_input_suffix
+    ! Tobias Finn: Added COSMO module
+    use enkf_cosmo_mod, only: update_cos_vars
 #endif
 
     implicit none
@@ -92,6 +98,12 @@ program pdaf_terrsysmp
         !print *,"Finished assimilation", tcycle
 
         !call print_update_pfb()
+#if (defined COUP_OAS_COS) && (!defined COUP_OAS_PFL)
+        ! Tobias Finn: Added COSMO data assimilation
+        IF((model.eq.tag_model_cosmo)) THEN
+            CALL update_cos_vars()
+        END IF
+#endif
         call update_tsmp()
 
         !call MPI_BARRIER(MPI_COMM_WORLD, IERROR)

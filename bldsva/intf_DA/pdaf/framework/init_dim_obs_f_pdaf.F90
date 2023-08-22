@@ -63,6 +63,7 @@ SUBROUTINE init_dim_obs_f_pdaf(step, dim_obs_f)
   USE mod_assimilation, &
        ONLY: obs_p, obs_index_p, dim_obs, obs_filename, &
        obs, &
+       obs_index_p_TB, &
        pressure_obserr_p, clm_obserr_p, &
        obs_nc2pdaf, &
        local_dims_obs, &
@@ -427,6 +428,8 @@ SUBROUTINE init_dim_obs_f_pdaf(step, dim_obs_f)
   ALLOCATE(obs_p(dim_obs_p))
   IF (ALLOCATED(obs_index_p)) DEALLOCATE(obs_index_p)
   ALLOCATE(obs_index_p(dim_obs_p))
+  IF (ALLOCATED(obs_index_p_TB)) DEALLOCATE(obs_index_p_TB)
+  ALLOCATE(obs_index_p_TB(dim_obs_p))
   if(point_obs.eq.0) then
       IF (ALLOCATED(var_id_obs)) DEALLOCATE(var_id_obs)
       ALLOCATE(var_id_obs(dim_obs_p))
@@ -495,6 +498,7 @@ SUBROUTINE init_dim_obs_f_pdaf(step, dim_obs_f)
            do j = 1, enkf_subvecsize
               if (idx_obs_nc(i) .eq. idx_map_subvec2state_fortran(j)) then
                  obs_index_p(count) = j
+                 obs_index_p_TB(count) = i !LSN: only for TB
                  obs_p(count) = pressure_obs(i)
                  var_id_obs(count) = var_id_obs_nc(k,m)
                  if(multierr.eq.1) pressure_obserr_p(count) = pressure_obserr(i)
@@ -514,6 +518,7 @@ SUBROUTINE init_dim_obs_f_pdaf(step, dim_obs_f)
               !obs_index(count) = j
               !obs(count) = pressure_obs(i)
               obs_index_p(count) = j
+              obs_index_p_TB(count) = i !LSN: only for TB
               obs_p(count) = pressure_obs(i)
               if(multierr.eq.1) pressure_obserr_p(count) = pressure_obserr(i)
               obs_nc2pdaf(local_dis(mype_filter+1)+count) = i
@@ -583,6 +588,7 @@ SUBROUTINE init_dim_obs_f_pdaf(step, dim_obs_f)
            do j = begg,endg
               if((longxy_obs(i) == longxy(k)) .and. (latixy_obs(i) == latixy(k))) then
                  obs_index_p(count) = k 
+                 obs_index_p_TB(count) = k !LSN: only for TB
                  obs_p(count) = clm_obs(i)
                  var_id_obs(count) = var_id_obs_nc(l,m)
                  if(multierr.eq.1) clm_obserr_p(count) = clm_obserr(i)

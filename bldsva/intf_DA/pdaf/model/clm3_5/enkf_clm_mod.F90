@@ -122,6 +122,7 @@ module enkf_clm_mod
     !end hcp
 
     !write(*,*) 'clm_statevecsize is ',clm_statevecsize
+    
     IF (allocated(clm_statevec)) deallocate(clm_statevec)
     if ((clmupdate_swc.NE.0) .OR. (clmupdate_T.NE.0)) allocate(clm_statevec(clm_statevecsize))  !hcp added condition
 
@@ -166,7 +167,17 @@ module enkf_clm_mod
         clm_statevec(cc+offset) = swc(j,i)
         cc = cc + 1
       end do
-    end do
+    endif                            
+    if(clmupdate_T.EQ.1) then       !hcp  LAI 
+      cc = 1
+        do j=clm_begg,clm_endg
+          clm_statevec(cc) = tgrou(j)
+          clm_statevec(cc+clm_varsize) = tvege(j)
+          clm_paramarr(cc) = ttlai(j)
+          cc = cc + 1
+        end do
+     write(*,*) 'b4 update, tgrou(beg) tvege(beg) ttlai(beg)=',tgrou(clm_begg), tvege(clm_begg), ttlai(clm_begg)
+    endif                            !hcp  LAI
 
     endif                       !hcp
 

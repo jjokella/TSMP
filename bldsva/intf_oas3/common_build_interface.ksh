@@ -305,8 +305,6 @@ route "${cyellow}>>> c_substitutions_cos${cnormal}"
 route "${cyellow}<<< c_substitutions_cos${cnormal}"
 }
 
-
-
 ############################ 
 #OASIS interface methods
 ############################

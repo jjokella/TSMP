@@ -80,9 +80,11 @@ SUBROUTINE init_dim_obs_pdaf(step, dim_obs_p)
 #ifndef CLMSA
 #ifndef OBS_ONLY_CLM
        depth_obs_p, &
-       sc_p, idx_obs_nc_p, &
+       sc_p, &
+       idx_obs_nc_p, &
 #endif
 #endif
+       obs_index_p_TB, &
        var_id_obs, maxlon, minlon, maxlat, &
        minlat, maxix, minix, maxiy, miniy, lon_var_id, ix_var_id, lat_var_id, iy_var_id, &
        screen
@@ -181,6 +183,7 @@ SUBROUTINE init_dim_obs_pdaf(step, dim_obs_p)
 
   !  if I'm root in filter, read the nc file
   is_multi_observation_files = .true.
+  !LSN: is_multi_observation_files = .false.
   if (is_multi_observation_files) then
       ! Set name of current NetCDF observation file
       write(current_observation_filename, '(a, i5.5)') trim(obs_filename)//'.', step
@@ -467,6 +470,8 @@ SUBROUTINE init_dim_obs_pdaf(step, dim_obs_p)
   ALLOCATE(obs_p(dim_obs_p))
   IF (ALLOCATED(obs_index_p)) DEALLOCATE(obs_index_p)
   ALLOCATE(obs_index_p(dim_obs_p))
+  IF (ALLOCATED(obs_index_p_TB)) DEALLOCATE(obs_index_p_TB)
+  ALLOCATE(obs_index_p_TB(dim_obs_p))
   if(obs_interp_switch .eq. 1) then
       ! Array for storing indices from states that are interpolated to observation locations
       IF (ALLOCATED(obs_interp_indices_p)) DEALLOCATE(obs_interp_indices_p)
@@ -570,6 +575,7 @@ SUBROUTINE init_dim_obs_pdaf(step, dim_obs_p)
               !obs_index(count) = j
               !obs(count) = pressure_obs(i)
               obs_index_p(count) = j
+              obs_index_p_TB(count) = i !LSN: only for TB
               obs_p(count) = pressure_obs(i)
               if(multierr.eq.1) pressure_obserr_p(count) = pressure_obserr(i)
               if(crns_flag.eq.1) then
@@ -734,6 +740,7 @@ SUBROUTINE init_dim_obs_pdaf(step, dim_obs_p)
               !obs_index_p(count) = j + ((endg-begg+1) * (clmobs_layer(i)-1))
               !obs_index_p(count) = j-begg+1 + ((endg-begg+1) * (clmobs_layer(i)-1))
               obs_index_p(count) = k + ((endg-begg+1) * (clmobs_layer(i)-1))
+              obs_index_p_TB(count) = j-begg+1 + ((endg-begg+1) * (clmobs_layer(i)-1)) !LSN: only for TB
               !write(*,*) 'obs_index_p(',count,') is',obs_index_p(count)
               obs_p(count) = clm_obs(i)
               if(multierr.eq.1) clm_obserr_p(count) = clm_obserr(i)

@@ -2025,7 +2025,7 @@ void update_parflow () {
     for(i=nshift,j=0;i<(nshift+enkf_subvecsize);i++,j++)
       subvec_param[j] = pf_statevec[i];
 
-    if(pf_gwmasking == 0){
+    if(pf_gwmasking != 1){
       ENKF2PF(perm_xx,subvec_param);
     }
     // hcp gmasking with param
@@ -2051,7 +2051,7 @@ void update_parflow () {
       }
     }
 
-    if(pf_gwmasking == 0){
+    if(pf_gwmasking != 1){
       ENKF2PF(perm_yy,subvec_param);
     }
     // hcp gmasking with param
@@ -2076,7 +2076,7 @@ void update_parflow () {
       }
     }
 
-    if(pf_gwmasking == 0){
+    if(pf_gwmasking != 1){
       ENKF2PF(perm_zz,subvec_param);
     }
     // hcp gmasking with param

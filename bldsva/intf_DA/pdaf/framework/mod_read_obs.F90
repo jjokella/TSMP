@@ -93,6 +93,7 @@ contains
         idx_varid,  x_idx_varid, y_idx_varid,  z_idx_varid, &
         depth_varid, &
         x_idx_interp_d_varid, y_idx_interp_d_varid
+    integer :: depth_varid !hcp
     character (len = *), parameter :: pres_name = "obs_pf"
     character (len = *), parameter :: presserr_name = "obserr_pf"
     character (len = *), parameter :: idx_name = "idx"
@@ -102,6 +103,7 @@ contains
     character (len = *), parameter :: depth_name = "depth"
     character (len = *), parameter :: x_idx_interp_d_name = "ix_interp_d"
     character (len = *), parameter :: y_idx_interp_d_name = "iy_interp_d"
+    character (len = *), parameter :: depth_name = "depth"  !hcp
     integer :: has_obs_pf
     integer :: has_depth
 #endif    

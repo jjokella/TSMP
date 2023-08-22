@@ -90,6 +90,9 @@ void read_enkfpar(char *parname)
   strcpy(outdir,string);
   nreal                 = iniparser_getint(pardict,"DA:nreal",0);
   startreal             = iniparser_getint(pardict,"DA:startreal",0);
+  //stat_dumpint          = iniparser_getint(pardict,"DA:stat_dumpinterval",1);
+  //SPo add lcmem : switch for CMEM
+  lcmem                 = iniparser_getboolean(pardict,"DA:lcmem",0);
   da_interval           = iniparser_getdouble(pardict,"DA:da_interval",1);
   stat_dumpoffset       = iniparser_getint(pardict,"DA:stat_dumpoffset",0);
   screen_wrapper        = iniparser_getint(pardict,"DA:screen_wrapper",1);
@@ -118,6 +121,8 @@ void read_enkfpar(char *parname)
   /* get settings for COSMO */
   nproccosmo      = iniparser_getint(pardict,"COSMO:nprocs",0);
   dtmult_cosmo    = iniparser_getint(pardict,"COSMO:dtmult",0);
+  string          = iniparser_getstring(pardict, "COSMO:assim_vars", "");
+  strcpy(assim_vars_cos, string);
 
 
   /* MPI_Comm_size(MPI_COMM_WORLD,&size); */
