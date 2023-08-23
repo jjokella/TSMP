@@ -201,14 +201,26 @@ SUBROUTINE init_dim_obs_pdaf(step, dim_obs_p)
   ! Broadcast first variables
   ! -------------------------
   ! Dimension of observation vector
+  if (screen > 2) then
+      print *, "TSMP-PDAF mype(w)=", mype_world, ": init_dim_obs_pdaf: bcast dim_obs"
+  end if
   call mpi_bcast(dim_obs, 1, MPI_INTEGER, 0, comm_filter, ierror)
   ! Switch for vector of observation errors
+  if (screen > 2) then
+      print *, "TSMP-PDAF mype(w)=", mype_world, ": init_dim_obs_pdaf: bcast multierr"
+  end if
   call mpi_bcast(multierr, 1, MPI_INTEGER, 0, comm_filter, ierror)
   ! broadcast crns_flag
   call mpi_bcast(crns_flag, 1, MPI_INTEGER, 0, comm_filter, ierror)
   ! broadcast dim_ny and dim_nx
   if(point_obs.eq.0) then
+    if (screen > 2) then
+      print *, "TSMP-PDAF mype(w)=", mype_world, ": init_dim_obs_pdaf: bcast dim_nx"
+    end if
      call mpi_bcast(dim_nx, 1, MPI_INTEGER, 0, comm_filter, ierror)
+    if (screen > 2) then
+      print *, "TSMP-PDAF mype(w)=", mype_world, ": init_dim_obs_pdaf: bcast dim_ny"
+    end if
      call mpi_bcast(dim_ny, 1, MPI_INTEGER, 0, comm_filter, ierror)
   endif
   ! broadcast damping factor flag
@@ -314,25 +326,58 @@ SUBROUTINE init_dim_obs_pdaf(step, dim_obs_p)
 #ifndef OBS_ONLY_CLM
   !if(model == tag_model_parflow) then
       ! if exist ParFlow-type obs
+     if (screen > 2) then
+       print *, "TSMP-PDAF mype(w)=", mype_world, ": init_dim_obs_pdaf: bcast pressure_obs"
+     end if
      call mpi_bcast(pressure_obs, dim_obs, MPI_DOUBLE_PRECISION, 0, comm_filter, ierror)
+     if (screen > 2 .and. multierr.eq.1) then
+       print *, "TSMP-PDAF mype(w)=", mype_world, ": init_dim_obs_pdaf: bcast pressure_obserr"
+     end if
      if(multierr.eq.1) call mpi_bcast(pressure_obserr, dim_obs, MPI_DOUBLE_PRECISION, 0, comm_filter, ierror)
+     if (screen > 2) then
+       print *, "TSMP-PDAF mype(w)=", mype_world, ": init_dim_obs_pdaf: bcast idx_obs_nc"
+     end if
      if(crns_flag.eq.1) call mpi_bcast(depth_obs, dim_obs, MPI_DOUBLE_PRECISION, 0, comm_filter, ierror)
      call mpi_bcast(idx_obs_nc, dim_obs, MPI_INTEGER, 0, comm_filter, ierror)
      ! broadcast xyz indices
+     if (screen > 2) then
+       print *, "TSMP-PDAF mype(w)=", mype_world, ": init_dim_obs_pdaf: bcast x_idx_obs_nc"
+     end if
      call mpi_bcast(x_idx_obs_nc, dim_obs, MPI_INTEGER, 0, comm_filter, ierror)
+     if (screen > 2) then
+       print *, "TSMP-PDAF mype(w)=", mype_world, ": init_dim_obs_pdaf: bcast y_idx_obs_nc"
+     end if
      call mpi_bcast(y_idx_obs_nc, dim_obs, MPI_INTEGER, 0, comm_filter, ierror)
+     if (screen > 2) then
+       print *, "TSMP-PDAF mype(w)=", mype_world, ": init_dim_obs_pdaf: bcast z_idx_obs_nc"
+     end if
      call mpi_bcast(z_idx_obs_nc, dim_obs, MPI_INTEGER, 0, comm_filter, ierror)
+     if (screen > 2 .and. point_obs.eq.0) then
+       print *, "TSMP-PDAF mype(w)=", mype_world, ": init_dim_obs_pdaf: bcast var_id_obs_nc"
+     end if
      if(point_obs.eq.0) call mpi_bcast(var_id_obs_nc, dim_obs, MPI_INTEGER, 0, comm_filter, ierror)
      if(obs_interp_switch .eq. 1) then
+       if (screen > 2) then
+         print *, "TSMP-PDAF mype(w)=", mype_world, ": init_dim_obs_pdaf: bcast x_interp_d"
+       end if
          call mpi_bcast(x_idx_interp_d_obs_nc, dim_obs, MPI_INTEGER, 0, comm_filter, ierror)
+       if (screen > 2) then
+         print *, "TSMP-PDAF mype(w)=", mype_world, ": init_dim_obs_pdaf: bcast y_interp_d"
+       end if
          call mpi_bcast(y_idx_interp_d_obs_nc, dim_obs, MPI_INTEGER, 0, comm_filter, ierror)
      end if
   !end if
+     if (screen > 2) then
+       print *, "TSMP-PDAF mype(w)=", mype_world, ": init_dim_obs_pdaf: bcast END"
+     end if
 #endif
 #endif
 
 #ifndef PARFLOW_STAND_ALONE
 #ifndef OBS_ONLY_PARFLOW
+     if (screen > 2) then
+       print *, "TSMP-PDAF mype(w)=", mype_world, ": init_dim_obs_pdaf: bcast CLM BEG"
+     end if
   !if(model == tag_model_clm) then
       ! if exist CLM-type obs
      call mpi_bcast(clm_obs, dim_obs, MPI_DOUBLE_PRECISION, 0, comm_filter, ierror)
@@ -342,6 +387,9 @@ SUBROUTINE init_dim_obs_pdaf(step, dim_obs_p)
      call mpi_bcast(clmobs_dr,  2, MPI_DOUBLE_PRECISION, 0, comm_filter, ierror)
      call mpi_bcast(clmobs_layer, dim_obs, MPI_INTEGER, 0, comm_filter, ierror)
      if(point_obs.eq.0) call mpi_bcast(var_id_obs_nc, dim_obs, MPI_INTEGER, 0, comm_filter, ierror)
+     if (screen > 2) then
+       print *, "TSMP-PDAF mype(w)=", mype_world, ": init_dim_obs_pdaf: bcast CLM END"
+     end if
   !end if
 #endif
 #endif
@@ -393,9 +441,18 @@ SUBROUTINE init_dim_obs_pdaf(step, dim_obs_p)
 #ifndef OBS_ONLY_CLM
   if (model .eq. tag_model_parflow) then
 
+     if (screen > 2) then
+       print *, "TSMP-PDAF mype(w)=", mype_world, ": init_dim_obs_pdaf: obs_id_p BEG"
+     end if
      if(allocated(obs_id_p)) deallocate(obs_id_p)
      allocate(obs_id_p(enkf_subvecsize))
      obs_id_p(:) = 0
+     if (screen > 2) then
+       print *, "TSMP-PDAF mype(w)=", mype_world, ": init_dim_obs_pdaf: enkf_subvecsize: ", enkf_subvecsize
+     end if
+     if (screen > 2) then
+       print *, "TSMP-PDAF mype(w)=", mype_world, ": init_dim_obs_pdaf: obs_id_p: ", obs_id_p
+     end if
 
      do i = 1, dim_obs
         do j = 1, enkf_subvecsize
@@ -405,6 +462,9 @@ SUBROUTINE init_dim_obs_pdaf(step, dim_obs_p)
            end if
         end do
      end do
+     if (screen > 2) then
+       print *, "TSMP-PDAF mype(w)=", mype_world, ": init_dim_obs_pdaf: obs_id_p END"
+     end if
   end if
 #endif
 #endif
