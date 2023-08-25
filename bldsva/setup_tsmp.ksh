@@ -1106,14 +1106,26 @@ route "${cyellow}<<< c_setup_clm${cnormal}"
 
 setup_clm(){
 route "${cyellow}>> setupClm${cnormal}"
+
+#  withCESM="true"
   seconds_clm=$(($hh*3600))
+
 #  runstep_clm=$(($runhours*3600/$dt_clm))
-  rpointer=$rundir/lnd.clmoas.rpointer
+  if [[ ${mList[1]} == "clm5_0" ]]; then
+    runstep_clm=$runhours
+  else
+    rpointer=$rundir/lnd.clmoas.rpointer
+  fi
 
 comment "  cp namelist to rundir"
   cp $namelist_clm $rundir/lnd.stdin >> $log_file 2>> $err_file
 check
 
+  if [[ ${mList[1]} == "clm5_0" ]]; then
+    comment "  sed num procs to namelist"
+    sed "s,__nprocs__,$(($px_clm * $py_clm))," -i $rundir/lnd.stdin >> $log_file 2>> $err_file
+    check
+  fi
 
   c_setup_clm
 }  
