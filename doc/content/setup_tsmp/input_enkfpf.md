@@ -34,6 +34,7 @@ paramupdate        =
 paramupdate_frequency =
 dampingfactor_param =
 dampingfactor_state =
+damping_masking_sm =
 aniso_perm_y       =
 aniso_perm_z       =
 aniso_use_parflow  =
@@ -42,6 +43,8 @@ printstat          =
 paramprintensemble =
 paramprintstat     =
 olfmasking         =
+olfmasking_param   =
+olfmasking_depth   =
 
 [CLM]
 problemname = ""
@@ -133,13 +136,20 @@ Must match with the specifications in the `*.pfidb` input.
 ### PF:gwmasking ###
 
 `PF:gwmasking`: (integer) Groundwater masking for assimilation of
-pressure data (updateflag=1) in ParFlow.
+pressure data (`pf_updateflag=1`) in ParFlow.
 
 -   0: No groundwater masking.
 
 -   1: Groundwater masking using saturated cells only.
 
 -   2: Groundwater masking using mixed state vector.
+
+For assimilating SM data (`pf_updateflag=2`), the following masking
+options are included:
+
+-   0: No groundwater masking.
+
+-   1: Groundwater masking using **unsaturated** cells only.
 
 ### PF:paramupdate ###
 
@@ -211,6 +221,15 @@ x_{update, damped} &= x + \mathtt{dampingfactor\_state} \cdot ( x_{update} - x )
 where $x$ is the state vector (without parameters) before assimilation
 and $x_{update}$ is the state vector after the assimilation.
 
+### PF:damping_masking_sm ###
+`PF:damping_masking_sm`: (integer) Switch for applying damping factor
+for state updates to soil moisture. Default `0`.
+
+General state damping is turned on by setting
+`PF:dampingfactor_state`.
+
+- `0`: State damping vector applies to soil moisture
+- `1`: State damping vector does not apply to soil moisture
 
 ### PF:aniso_perm_y ###
 
@@ -285,9 +304,39 @@ f.e.  `param.ksat`, `param.mannings` or `param.poro`.
 
 `PF:olfmasking`: (integer) Only used in case you do not want to update
 the state on certain grid-cells during DA with pdaf. eg. not update
-the cell which is saturated. Option \"1\" means that all saturated
-cells at surface are not used for an update. Option \"2\" reads a pfb
-for masking the stream.
+the cell which is saturated. Masked cells are not used for the state
+update.
+
+- Option \"1\": All cells at surface are masked.
+
+- Option \"2\" reads a pfb of masked cells (use-case:
+  rivers/streams). The full soil column below the masked cells is not
+  updated!
+
+- Option \"3\": All saturated cells at surface are masked. Only
+  implemented, when pressure is in the state vector,
+  i.e. `PF:updateflag` is `1` or `3`.
+
+### PF:olfmasking_param ###
+
+`PF:olfmasking_param`: (integer) Only used in case you do not want to
+update the parameters from the EnKF state vector on certain grid-cells
+during DA with pdaf. eg. not update the cell which is
+saturated. Masked cells are not used for the parameter update.
+
+- Option \"1\" All cells at surface are masked. Only implemented for
+  `PF:paramupdate==1`.
+
+- NOT YET IMPLEMENTED: Option \"2\" reads a pfb for masking the
+  stream.
+
+- Option \"3\": All saturated cells at surface are masked. Only
+  implemented for `PF:paramupdate==1`; `PF:updateflag` `1` or `3`.
+
+### PF:olfmasking_depth ###
+
+`PF:olfmasking_depth`: (integer) Number of layers (counted from
+surface) to mask in overland flow river masking. Default: 1.
 
 ## [CLM] ##
 
@@ -482,6 +531,7 @@ Effect of `obs_interp_switch=1`:
  |           | `paramupdate_frequency` | 1             |
  |           | `dampingfactor_param`   | 1.0           |
  |           | `dampingfactor_state`   | 1.0           |
+ |           | `damping_masking_sm`    | 0             |
  |           | `aniso_perm_y`          | 1.0           |
  |           | `aniso_perm_z`          | 1.0           |
  |           | `aniso_use_parflow`     | 0             |
@@ -491,6 +541,7 @@ Effect of `obs_interp_switch=1`:
  |           | `paramprintensemble`    | 1             |
  |           | `paramprintstat`        | 1             |
  |           | `olfmasking`            | 0             |
+ |           | `olfmasking_param`      | 0             |
  | `[CLM]`   |                         |               |
  |           | `problemname`           | \-            |
  |           | `nprocs`                | 0             |

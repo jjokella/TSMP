@@ -618,6 +618,16 @@ void enkfparflowadvance(int tcycle, double current_time, double dt)
 	    soilay[isc] *= dz_glob;
 	  }
 	  /* hcp CRNS ends */
+
+          /* masking option using UNsaturated cells only */
+          if(pf_gwmasking == 1){
+	    PF2ENKF(pressure_out, subvec_p);
+            for(i=0;i<enkf_subvecsize;i++){
+              subvec_gwind[i] = 1.0;
+              if(subvec_p[i]> 0.0) subvec_gwind[i] = 0.0;
+            }
+          }
+
 	}
 
 	/* create state vector: joint swc + pressure */
@@ -658,6 +668,15 @@ void enkfparflowadvance(int tcycle, double current_time, double dt)
 	       arr_aniso_perm_yy[i] = subvec_permy[i] / subvec_param[i];
 	       arr_aniso_perm_zz[i] = subvec_permz[i] / subvec_param[i];
 	     }
+
+
+	     for(i=0; i<10; i=i++){
+	       printf("TSMP-PDAF-WRAPPER mype(w)=%d: set arr_aniso_perm_yy[%d]=%f\n", mype_world, i, arr_aniso_perm_yy[i]);
+	     }
+	     for(i=1; i<10; i=i++){
+	       printf("TSMP-PDAF-WRAPPER mype(w)=%d: set arr_aniso_perm_zz[%d]=%f\n", mype_world, i, arr_aniso_perm_zz[i]);
+	     }
+
 	   }
 
 
@@ -744,6 +763,14 @@ void enkfparflowadvance(int tcycle, double current_time, double dt)
 	       arr_aniso_perm_yy[i] = subvec_permy[i] / subvec_param[j];
 	       arr_aniso_perm_zz[i] = subvec_permz[i] / subvec_param[j];
 	     }
+
+	     for(i=0; i<10; i=i++){
+	       printf("TSMP-PDAF-WRAPPER mype(w)=%d: set arr_aniso_perm_yy[%d]=%f\n", mype_world, i, arr_aniso_perm_yy[i]);
+	     }
+	     for(i=1; i<10; i=i++){
+	       printf("TSMP-PDAF-WRAPPER mype(w)=%d: set arr_aniso_perm_zz[%d]=%f\n", mype_world, i, arr_aniso_perm_zz[i]);
+	     }
+
 	   }
 
         }
@@ -784,6 +811,13 @@ void enkfparflowadvance(int tcycle, double current_time, double dt)
 	     for(i=0,j=0;i<enkf_subvecsize;i++,j=j+3){
 	       arr_aniso_perm_yy[i] = subvec_permy[i] / subvec_param[j];
 	       arr_aniso_perm_zz[i] = subvec_permz[i] / subvec_param[j];
+	     }
+
+	     for(i=0; i<10; i=i++){
+	       printf("TSMP-PDAF-WRAPPER mype(w)=%d: set arr_aniso_perm_yy[%d]=%f\n", mype_world, i, arr_aniso_perm_yy[i]);
+	     }
+	     for(i=1; i<10; i=i++){
+	       printf("TSMP-PDAF-WRAPPER mype(w)=%d: set arr_aniso_perm_zz[%d]=%f\n", mype_world, i, arr_aniso_perm_zz[i]);
 	     }
 	   }
 
@@ -851,6 +885,14 @@ void enkfparflowadvance(int tcycle, double current_time, double dt)
 	       arr_aniso_perm_yy[i] = subvec_permy[i] / subvec_param[j];
 	       arr_aniso_perm_zz[i] = subvec_permz[i] / subvec_param[j];
 	     }
+
+	     for(i=0; i<10; i=i++){
+	       printf("TSMP-PDAF-WRAPPER mype(w)=%d: set arr_aniso_perm_yy[%d]=%f\n", mype_world, i, arr_aniso_perm_yy[i]);
+	     }
+	     for(i=1; i<10; i=i++){
+	       printf("TSMP-PDAF-WRAPPER mype(w)=%d: set arr_aniso_perm_zz[%d]=%f\n", mype_world, i, arr_aniso_perm_zz[i]);
+	     }
+
 	   }
 
         }
@@ -1336,7 +1378,7 @@ void enkf_printmannings(char *pre, char *suff){
 
 
 void update_parflow () {
-  int i,j,k;
+  int i,j,k, idebug;
   VectorUpdateCommHandle *handle;
 
   double *dat;
@@ -1347,6 +1389,11 @@ void update_parflow () {
     dat = &pf_statevec[enkf_subvecsize];
   }else{
     dat = &pf_statevec[0];
+  }
+
+  /* Update damping factor if set in observation file */
+  if(is_dampfac_state_flexible){
+    pf_dampfac_state = dampfac_state_flexible;
   }
 
   /* state damping */
@@ -1365,7 +1412,9 @@ void update_parflow () {
 	    dat[i] = subvec_p[i] + pf_dampfac_state * (dat[i] - subvec_p[i]);
 	  }
 	  else if(subvec_gwind[i] == 0.0){
-	    dat[i] = subvec_sat[i] * subvec_porosity[i] + pf_dampfac_state * (dat[i] - subvec_sat[i] * subvec_porosity[i]);
+	    if(pf_dampmask_sm == 0){
+	      dat[i] = subvec_sat[i] * subvec_porosity[i] + pf_dampfac_state * (dat[i] - subvec_sat[i] * subvec_porosity[i]);
+	    }
 	  }
 	  else{
 	    printf("ERROR: pf_gwmasking = 2, but subvec_gwind is neither 0.0 nor 1.0\n");
@@ -1775,8 +1824,18 @@ void update_parflow () {
       nshift = enkf_subvecsize;
     }
 
+    if(screen_wrapper > 2 && task_id == 1) {
+      printf("TSMP-PDAF-WRAPPER mype(w)=%d: enkf_subvecsize=%d\n", mype_world, enkf_subvecsize);
+      printf("TSMP-PDAF-WRAPPER mype(w)=%d: pf_paramvecsize=%d\n", mype_world, pf_paramvecsize);
+      printf("TSMP-PDAF-WRAPPER mype(w)=%d: nshift=%d\n", mype_world, nshift);
+    }
+    
+
     int por_counter = 0;
     for(i=nshift,j=0;i<(nshift+pf_paramvecsize);i++,j++){
+      if(screen_wrapper > 2 && task_id == 1) {
+	printf("TSMP-PDAF-WRAPPER mype(w)=%d: i=%d, j=%d\n", mype_world, i, j);
+      }
         subvec_param[j] = pf_statevec[i];
         if((j%2)!=0){
             subvec_porosity[por_counter] = pf_statevec[i];
@@ -1784,12 +1843,29 @@ void update_parflow () {
         }
     }
 
+    if(screen_wrapper > 2 && task_id == 1) {
+      printf("TSMP-PDAF-WRAPPER mype(w)=%d: por_counter=%d\n", mype_world, por_counter);
+    }
+    
     ENKF2PF_2P(perm_xx,porosity,subvec_param);
     handle = InitVectorUpdate(perm_xx, VectorUpdateAll);
     FinalizeVectorUpdate(handle);
     handle = InitVectorUpdate(porosity, VectorUpdateAll);
     FinalizeVectorUpdate(handle);
 
+    if(screen_wrapper > 2 && task_id == 1) {
+      printf("TSMP-PDAF-WRAPPER mype(w)=%d: perm_xx, porosity updated\n", mype_world);
+    }
+
+    if(pf_aniso_use_parflow == 1){
+      for(idebug=0; idebug<10; idebug=idebug++){
+	printf("TSMP-PDAF-WRAPPER mype(w)=%d: used arr_aniso_perm_yy[%d]=%f\n", mype_world, idebug, arr_aniso_perm_yy[idebug]);
+      }
+      for(idebug=0; idebug<10; idebug=idebug++){
+	printf("TSMP-PDAF-WRAPPER mype(w)=%d: used arr_aniso_perm_zz[%d]=%f\n", mype_world, idebug, arr_aniso_perm_zz[idebug]);
+      }
+    }
+    
     /* update perm_yy and perm_zz */
     for(i=nshift,j=0,k=0;i<(nshift+pf_paramvecsize);i=i+2,j=j+2,k++){
       if(pf_aniso_use_parflow == 1){
@@ -1801,11 +1877,19 @@ void update_parflow () {
       }
     }
 
+    if(screen_wrapper > 2 && task_id == 1) {
+      printf("TSMP-PDAF-WRAPPER mype(w)=%d: perm_yy, perm_zz set\n", mype_world);
+    }
+
     ENKF2PF_2P(perm_yy,perm_zz,subvec_param);
     handle = InitVectorUpdate(perm_yy, VectorUpdateAll);
     FinalizeVectorUpdate(handle);
     handle = InitVectorUpdate(perm_zz, VectorUpdateAll);
     FinalizeVectorUpdate(handle);
+
+    if(screen_wrapper > 2 && task_id == 1) {
+      printf("TSMP-PDAF-WRAPPER mype(w)=%d: perm_yy, perm_zz updated\n", mype_world);
+    }
   }
 
   /* porosity and van Genuchten parameter */
@@ -1879,6 +1963,19 @@ void update_parflow () {
         }
     }
 
+    /* for(i=0; i<pf_paramvecsize; i=i+4){ */
+    /*   printf("TSMP-PDAF-WRAPPER mype(w)=%d: subvec_param[%d]=%f\n", mype_world, i, subvec_param[i]); */
+    /* } */
+    /* for(i=1; i<pf_paramvecsize; i=i+4){ */
+    /*   printf("TSMP-PDAF-WRAPPER mype(w)=%d: subvec_param[%d]=%f\n", mype_world, i, subvec_param[i]); */
+    /* } */
+    /* for(i=2; i<pf_paramvecsize; i=i+4){ */
+    /*   printf("TSMP-PDAF-WRAPPER mype(w)=%d: subvec_param[%d]=%f\n", mype_world, i, subvec_param[i]); */
+    /* } */
+    /* for(i=3; i<pf_paramvecsize; i=i+4){ */
+    /*   printf("TSMP-PDAF-WRAPPER mype(w)=%d: subvec_param[%d]=%f\n", mype_world, i, subvec_param[i]); */
+    /* } */
+
     ENKF2PF_4P(perm_xx,porosity,alpha,n,subvec_param);
     handle = InitVectorUpdate(perm_xx, VectorUpdateAll);
     FinalizeVectorUpdate(handle);
@@ -1922,7 +2019,7 @@ void update_parflow () {
     FinalizeVectorUpdate(handle);
   }
 
-  if(pf_olfmasking == 1) mask_overlandcells();
+  if(pf_olfmasking == 1 || pf_olfmasking == 3) mask_overlandcells();
   if(pf_olfmasking == 2) mask_overlandcells_river();
 
   if(pf_updateflag == 1) {
@@ -1982,13 +2079,21 @@ void update_parflow () {
       /* } */
     }
     int saturation_to_pressure_type = 1;
-    ENKF2PF(saturation_in, pf_statevec);
+
+    /* Add an option here for masked update */
+    if(pf_gwmasking == 1){
+      ENKF2PF_masked(saturation_in, pf_statevec,subvec_gwind);
+    }else{
+      ENKF2PF(saturation_in, pf_statevec);
+    }
+
     Problem * problem = GetProblemRichards(solver);
     double gravity = ProblemGravity(problem);
     Vector * pressure_in = GetPressureRichards(solver);
     Vector * density = GetDensityRichards(solver);
     ProblemData * problem_data = GetProblemDataRichards(solver);
     PFModule * problem_saturation = ProblemSaturation(problem);
+
     // convert saturation to pressure
     global_ptr_this_pf_module = problem_saturation;
     SaturationToPressure(saturation_in,	pressure_in, density, gravity, problem_data, CALCFCN, saturation_to_pressure_type);
@@ -2021,6 +2126,42 @@ void update_parflow () {
       nshift = enkf_subvecsize;
     }
 
+    /* River masking for permeability update */
+    if(pf_olfmasking_param == 1 || pf_olfmasking_param == 3){
+
+      int idepth;
+      int izero = 0;
+      /* ishift implements the index shift nshift in pf_statevec */
+      int ishift = nshift;
+
+      /* fast-forward counters to layer numer `pf_olfmasking_depth`
+	 below surface layer */
+      izero += nx_local*ny_local*(nz_local-pf_olfmasking_depth);
+      ishift += nx_local*ny_local*(nz_local-pf_olfmasking_depth);
+
+      /* mask updated parameter values in uppermost model layers */
+      for(idepth=0;idepth<pf_olfmasking_depth;idepth++){
+	for(i=0;i<ny_local;i++){
+	  for(j=0;j<nx_local;j++){
+	    if(pf_olfmasking == 1){
+	      pf_statevec[ishift] = subvec_param[izero];
+	    }
+	    else if(pf_olfmasking == 3){
+	      if(pf_updateflag == 1 || pf_updateflag == 3){
+		if(subvec_p[izero]>0.0) pf_statevec[ishift] = subvec_param[izero];
+	      }else{
+		printf("Error (update_parflow): pf_olfmasking_param = 3 requires pf_updateflag = 1 or 3\n");
+		exit(1);
+	      }
+	    }
+	    ishift++;
+	    izero++;
+	  }
+	}
+      }
+
+    }
+
     /* update perm_xx */
     for(i=nshift,j=0;i<(nshift+enkf_subvecsize);i++,j++)
       subvec_param[j] = pf_statevec[i];
@@ -2041,9 +2182,14 @@ void update_parflow () {
     handle = InitVectorUpdate(perm_xx, VectorUpdateAll);
     FinalizeVectorUpdate(handle);
 
+    if(pf_aniso_use_parflow == 1){
+      for(idebug=0; idebug<10; idebug=idebug++){
+	printf("TSMP-PDAF-WRAPPER mype(w)=%d: used arr_aniso_perm_yy[%d]=%f\n", mype_world, idebug, arr_aniso_perm_yy[idebug]);
+      }
+    }
+
     /* update perm_yy */
     for(i=nshift,j=0,k=0;i<(nshift+enkf_subvecsize);i++,j++,k++){
-
       if(pf_aniso_use_parflow == 1){
 	subvec_param[j] = pf_statevec[i] * arr_aniso_perm_yy[k];
       }else{
@@ -2066,6 +2212,12 @@ void update_parflow () {
     // hcp fin
     handle = InitVectorUpdate(perm_yy, VectorUpdateAll);
     FinalizeVectorUpdate(handle);
+
+    if(pf_aniso_use_parflow == 1){
+      for(idebug=0; idebug<10; idebug=idebug++){
+	printf("TSMP-PDAF-WRAPPER mype(w)=%d: used arr_aniso_perm_zz[%d]=%f\n", mype_world, idebug, arr_aniso_perm_zz[idebug]);
+      }
+    }
 
     /* update perm_zz */
     for(i=nshift,j=0,k=0;i<(nshift+enkf_subvecsize);i++,j++,k++){
@@ -2181,6 +2333,15 @@ void update_parflow () {
     handle = InitVectorUpdate(n_sat, VectorUpdateAll);
     FinalizeVectorUpdate(handle);
 
+    if(pf_aniso_use_parflow == 1){
+      for(idebug=0; idebug<10; idebug=idebug++){
+	printf("TSMP-PDAF-WRAPPER mype(w)=%d: used arr_aniso_perm_yy[%d]=%f\n", mype_world, idebug, arr_aniso_perm_yy[idebug]);
+      }
+      for(idebug=0; idebug<10; idebug=idebug++){
+	printf("TSMP-PDAF-WRAPPER mype(w)=%d: used arr_aniso_perm_zz[%d]=%f\n", mype_world, idebug, arr_aniso_perm_zz[idebug]);
+      }
+    }
+    
     /* update perm_yy and perm_zz*/
     for(i=nshift,j=0,k=0;i<(nshift+pf_paramvecsize);i=i+3,j=j+3,k++){
         /* if((j%2)==0){ */
@@ -2218,53 +2379,73 @@ void update_parflow () {
 
 void mask_overlandcells()
 {
+  int idepth;
   int i,j,k;
   int counter = 0;
 
-  /* fast-forward counter to uppermost model layer */
-  counter = nx_local*ny_local*(nz_local-1);
+  /* fast-forward counter to uppermost model layer (minus pf_olfmasking_depth) */
+  counter = nx_local*ny_local*(nz_local-pf_olfmasking_depth);
 
-  /* mask updated values in uppermost model layer */
+  /* mask updated values in uppermost model layers */
   if(pf_updateflag == 1){
-    for(i=0;i<ny_local;i++){
-      for(j=0;j<nx_local;j++){
-        //if(subvec_p[counter]>0.0) pf_statevec[counter] = subvec_p[counter];
-        pf_statevec[counter] = subvec_p[counter];
-        counter++;
+    for(idepth=0;idepth<pf_olfmasking_depth;idepth++){
+      for(i=0;i<ny_local;i++){
+	for(j=0;j<nx_local;j++){
+	  if(pf_olfmasking == 1){
+	    pf_statevec[counter] = subvec_p[counter];
+	  }
+	  else if(pf_olfmasking == 3){
+	    if(subvec_p[counter]>0.0) pf_statevec[counter] = subvec_p[counter];
+	  }
+	  counter++;
+	}
       }
     }
     if(pf_gwmasking == 2){   //There are overland cells being unsat (by hcp)
-      counter = nx_local*ny_local*(nz_local-1);
-      for(i=0;i<ny_local;i++){
-        for(j=0;j<nx_local;j++){
-          //if(subvec_p[counter]>0.0) pf_statevec[counter] = subvec_p[counter];
-          if(subvec_gwind[counter] < 0.5){
-             pf_statevec[counter] = subvec_sat[counter]*subvec_porosity[counter];
-          }
-          counter++;
-        }
+      counter = nx_local*ny_local*(nz_local-pf_olfmasking_depth);
+      for(idepth=0;idepth<pf_olfmasking_depth;idepth++){
+	for(i=0;i<ny_local;i++){
+	  for(j=0;j<nx_local;j++){
+	    if(subvec_gwind[counter] < 0.5){
+	      if(pf_olfmasking == 1){
+		pf_statevec[counter] = subvec_sat[counter]*subvec_porosity[counter];
+	      }
+	      else if(pf_olfmasking == 3){
+		if(subvec_p[counter]>0.0) pf_statevec[counter] = subvec_sat[counter]*subvec_porosity[counter];
+	      }
+	    }
+	    counter++;
+	  }
+	}
       }
     }
   }
   if(pf_updateflag == 2){
-    for(i=0;i<ny_local;i++){
-      for(j=0;j<nx_local;j++){
-        //if(subvec_p[counter]>0.0) pf_statevec[counter] = subvec_sat[counter]*subvec_porosity[counter];
-        pf_statevec[counter] = subvec_sat[counter]*subvec_porosity[counter];
-        counter++;
+    for (idepth=0;idepth<pf_olfmasking_depth;idepth++){
+      for(i=0;i<ny_local;i++){
+	for(j=0;j<nx_local;j++){
+	  pf_statevec[counter] = subvec_sat[counter]*subvec_porosity[counter];
+	  //if(condition on saturations) pf_statevec[counter] = subvec_sat[counter]*subvec_porosity[counter];
+	  counter++;
+	}
       }
     }
   }
   if(pf_updateflag == 3){
-    for(i=0;i<ny_local;i++){
-      for(j=0;j<nx_local;j++){
-        //if(subvec_p[counter]>0.0) pf_statevec[counter+enkf_subvecsize] = subvec_p[counter];
-        pf_statevec[counter+enkf_subvecsize] = subvec_p[counter];
-        counter++;
+    for (idepth=0;idepth<pf_olfmasking_depth;idepth++){
+      for(i=0;i<ny_local;i++){
+	for(j=0;j<nx_local;j++){
+	  if(pf_olfmasking == 1){
+	    pf_statevec[counter+enkf_subvecsize] = subvec_p[counter];
+	  }
+	  else if(pf_olfmasking == 3){
+	    if(subvec_p[counter]>0.0) pf_statevec[counter+enkf_subvecsize] = subvec_p[counter];
+	  }
+	  counter++;
+	}
       }
     }
   }
-
 }
 
 

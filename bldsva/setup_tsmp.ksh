@@ -1477,6 +1477,8 @@ check
   setCombination
   initSetup
 
+  echo "DEBUG: cplfreq1 after initSetup: $cplfreq1" >> $log_file 2>> $err_file
+
   getMachineDefaults
   setSelection
      	
@@ -1596,6 +1598,7 @@ check
         namelist_pfl="${orignamelist_pfl}_${instance}"
     fi
 
+    echo "DEBUG: cplfreq1 before setup_clm: $cplfreq1" >> $log_file 2>> $err_file
     if [[ $withCLM == "true" ]] ; then ; setup_clm ;  fi
     if [[ $withCOS == "true" ]] ; then ; setup_cos ;  fi
     if [[ $withICON == "true" ]] ; then ; setup_icon ;  fi
