@@ -78,6 +78,7 @@ GLOBAL MPI_Fint fsubcomm;
 GLOBAL int oasprefixno;
 GLOBAL int clmprefixlen;
 GLOBAL int pf_updateflag;
+GLOBAL int pf_updateflag_tmp;
 GLOBAL int pf_paramupdate;
 GLOBAL int pf_printensemble;
 GLOBAL int pf_printstat;

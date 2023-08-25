@@ -211,6 +211,82 @@ void integrate_tsmp() {
   tstartcycle++;
 }
 
+void integrate_tsmp_2() {
+
+  /* Forward computation with length zero, new state vector
+     assembled */
+  
+  /* CLM */
+  if(model == 0){
+#if defined COUP_OAS_PFL || defined CLMSA || defined COUP_OAS_COS
+    /* Number of time steps for CLM */
+    int tsclm;
+    tsclm = 0.0;
+
+    /* Debug output */
+    if (screen_wrapper > 1 && task_id==1) {
+      printf("TSMP-PDAF-WRAPPER mype(w)=%d: CLM: advancing (%d clm time steps)\n",mype_world, tsclm);
+    }
+
+    /* Integrate CLM */
+    clm_advance(&tsclm);
+
+    /* Debug output */
+    if (screen_wrapper > 1 && task_id==1) {
+      printf("TSMP-PDAF-WRAPPER mype(w)=%d: CLM: advancing finished\n", mype_world);
+    }
+
+#endif
+  }
+
+  /* ParFlow */
+  if(model == 1){
+#if defined COUP_OAS_PFL || defined PARFLOW_STAND_ALONE
+    /* Debug output */
+    if (screen_wrapper > 1 && task_id==1) {
+      printf("TSMP-PDAF-WRAPPER mype(w)=%d: Parflow: advancing (from %lf to %lf)\n",mype_world,t_start,t_start+(double)0.0);
+    }
+
+    /* Second update: soil moisture */
+    pf_updateflag_tmp = pf_updateflag
+    pf_updateflag = 2
+    
+    /* Integrate ParFlow */
+    enkfparflowadvance(tcycle, t_start,(double)0.0);
+
+    /* Debug output */
+    if (screen_wrapper > 1 && task_id==1) {
+      printf("TSMP-PDAF-WRAPPER mype(w)=%d: Parflow: advancing finished\n", mype_world);
+    }
+
+    /* Print ensemble statistics to PFB */
+    if(pf_printstat==1){
+      printstat_parflow();
+    }
+#endif
+  }
+
+  /* COSMO */
+  if(model == 2){
+#if defined COUP_OAS_COS
+
+    /* Number of time steps for COSMO */
+    int tscos;
+    tscos = 0.0;
+    tscos = tscos * dtmult_cosmo; /* Multiplier read from input */
+
+    /* Debug output */
+    if (screen_wrapper > 1 && task_id==1) {
+      printf("TSMP-PDAF-WRAPPER mype(w)=%d: COSMO: tscos is %d",mype_world,tscos);
+    }
+
+    /* Integrate COSMO */
+    cosmo_advance(&tscos);
+#endif
+  }
+
+}
+
 #if (defined COUP_OAS_PFL || defined PARFLOW_STAND_ALONE)
 void print_update_pfb(){
   if(model == 1){
@@ -218,8 +294,6 @@ void print_update_pfb(){
   }
 }
 #endif
-
-
 
 void update_tsmp(){
 
@@ -244,6 +318,37 @@ void update_tsmp(){
   }
 #endif
 
+  //  !print *,"Finished update_tsmp()"
+
+
+}
+
+void update_tsmp_2(){
+
+#if defined CLMSA
+  if((model == tag_model_clm) && ((clmupdate_swc != 0) || (clmupdate_T != 0))){
+    update_clm();
+    print_update_clm(&tcycle, &total_steps);
+  }
+#endif
+
+  /* print analysis and update parflow */
+#if (defined COUP_OAS_PFL || defined PARFLOW_STAND_ALONE)
+  if(model == 1){
+    update_parflow();
+  }
+#endif
+
+  // print et statistics
+#if !defined PARFLOW_STAND_ALONE
+  if(model == tag_model_clm && clmprint_et == 1){
+    write_clm_statistics(&tcycle, &total_steps);
+  }
+#endif
+
+  /* Set the original pf_updateflag after second update */
+  pf_updateflag = pf_updateflag_tmp
+  
   //  !print *,"Finished update_tsmp()"
 
 

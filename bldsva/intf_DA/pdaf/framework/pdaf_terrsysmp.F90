@@ -37,7 +37,7 @@ program pdaf_terrsysmp
         ! npes_parflow, comm_model, &
         !mpi_comm_world, mpi_success, model,
         tcycle, model
-    use mod_tsmp, only: initialize_tsmp, integrate_tsmp, update_tsmp,&
+    use mod_tsmp, only: initialize_tsmp, integrate_tsmp, integrate_tsmp_2, update_tsmp, update_tsmp_2, &
         & finalize_tsmp, tag_model_clm
     use mod_assimilation, only: screen
 
@@ -93,6 +93,18 @@ program pdaf_terrsysmp
 
         !call print_update_pfb()
         call update_tsmp()
+
+        ! forward simulation of component models
+        call integrate_tsmp_2()
+
+        ! assimilation step
+        call assimilate_pdaf()
+
+        !call MPI_BARRIER(MPI_COMM_WORLD, IERROR)
+        !print *,"Finished assimilation", tcycle
+
+        !call print_update_pfb()
+        call update_tsmp_2()
 
         !call MPI_BARRIER(MPI_COMM_WORLD, IERROR)
         !print *,"Finished complete assimilation cycle", tcycle

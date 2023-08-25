@@ -63,6 +63,13 @@ module mod_tsmp
     end interface
 
     interface
+        subroutine integrate_tsmp_2() bind(c)
+            use iso_c_binding
+            implicit none
+        end subroutine integrate_tsmp_2
+    end interface
+
+    interface
         subroutine print_update_pfb() bind(c)
             use iso_c_binding
             implicit none
@@ -74,6 +81,13 @@ module mod_tsmp
             use iso_c_binding
             implicit none
         end subroutine update_tsmp
+    end interface
+
+    interface
+        subroutine update_tsmp_2() bind(c)
+            use iso_c_binding
+            implicit none
+        end subroutine update_tsmp_2
     end interface
 
      interface
