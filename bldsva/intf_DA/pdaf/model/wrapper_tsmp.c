@@ -248,8 +248,8 @@ void integrate_tsmp_2() {
     }
 
     /* Second update: soil moisture */
-    pf_updateflag_tmp = pf_updateflag
-    pf_updateflag = 2
+    pf_updateflag_tmp = pf_updateflag;
+    pf_updateflag = 2;
     
     /* Integrate ParFlow */
     enkfparflowadvance(tcycle, t_start,(double)0.0);
@@ -347,7 +347,7 @@ void update_tsmp_2(){
 #endif
 
   /* Set the original pf_updateflag after second update */
-  pf_updateflag = pf_updateflag_tmp
+  pf_updateflag = pf_updateflag_tmp;
   
   //  !print *,"Finished update_tsmp()"
 
