@@ -259,10 +259,10 @@ void integrate_tsmp_2() {
       printf("TSMP-PDAF-WRAPPER mype(w)=%d: Parflow: advancing finished\n", mype_world);
     }
 
-    /* Print ensemble statistics to PFB */
-    if(pf_printstat==1){
-      printstat_parflow();
-    }
+    /* /\* Print ensemble statistics to PFB *\/ */
+    /* if(pf_printstat==1){ */
+    /*   printstat_parflow(); */
+    /* } */
 #endif
   }
 
