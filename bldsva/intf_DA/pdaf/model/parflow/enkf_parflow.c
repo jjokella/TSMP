@@ -550,6 +550,9 @@ void enkfparflowadvance(int tcycle, double current_time, double dt)
 	  /* Read pressure, saturation and porosity from ParFlow data
 	     without update. No forward simulation between consecutive
 	     updates of pressure and soil moisture. */
+
+	  VectorUpdateCommHandle *handle;
+
 	  Vector *pressure_out = GetPressureRichards(solver);
 	  Vector *saturation_out = GetSaturationRichards(solver);
 
