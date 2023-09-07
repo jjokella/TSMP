@@ -522,29 +522,40 @@ void enkfparflowadvance(int tcycle, double current_time, double dt)
 {
 	int i,j;
 
-	/* BEGINNING: wrf_parflow related part */
-	/* ----------------------------------- */
-	double stop_time = current_time + dt;
+	if(dt > 0.0){
+	  /* BEGINNING: wrf_parflow related part */
+	  /* ----------------------------------- */
+	  double stop_time = current_time + dt;
 
-	Vector *pressure_out;
-	Vector *porosity_out;
-	Vector *saturation_out;
+	  Vector *pressure_out;
+	  Vector *porosity_out;
+	  Vector *saturation_out;
+	
+	  VectorUpdateCommHandle *handle;
 
-	VectorUpdateCommHandle *handle;
+	  handle = InitVectorUpdate(evap_trans, VectorUpdateAll);
+	  FinalizeVectorUpdate(handle);
 
-	handle = InitVectorUpdate(evap_trans, VectorUpdateAll);
-	FinalizeVectorUpdate(handle);
+	  AdvanceRichards(amps_ThreadLocal(solver), current_time, stop_time, NULL, amps_ThreadLocal(evap_trans), &pressure_out, &porosity_out, &saturation_out);
 
-	AdvanceRichards(amps_ThreadLocal(solver), current_time, stop_time, NULL, amps_ThreadLocal(evap_trans), &pressure_out, &porosity_out, &saturation_out);
-
-	handle = InitVectorUpdate(pressure_out, VectorUpdateAll);
-	FinalizeVectorUpdate(handle);
-	handle = InitVectorUpdate(porosity_out, VectorUpdateAll);
-	FinalizeVectorUpdate(handle);
-	handle = InitVectorUpdate(saturation_out, VectorUpdateAll);
-	FinalizeVectorUpdate(handle);
+	  handle = InitVectorUpdate(pressure_out, VectorUpdateAll);
+	  FinalizeVectorUpdate(handle);
+	  handle = InitVectorUpdate(porosity_out, VectorUpdateAll);
+	  FinalizeVectorUpdate(handle);
+	  handle = InitVectorUpdate(saturation_out, VectorUpdateAll);
+	  FinalizeVectorUpdate(handle);
 	/* END: wrf_parflow related part */
 	/* ----------------------------- */
+	}else{
+	  /* Read pressure, saturation and porosity from ParFlow data
+	     without update. No forward simulation between consecutive
+	     updates of pressure and soil moisture. */
+	  Vector *pressure_out = GetPressureRichards(solver);
+	  Vector *saturation_out = GetSaturationRichards(solver);
+
+	  ProblemData *problem_data = GetProblemDataRichards(solver);
+	  Vector       *porosity_out    = ProblemDataPorosity(problem_data);
+	}
 
 	/* create state vector: pressure */
 	if(pf_updateflag == 1) {

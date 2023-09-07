@@ -229,15 +229,15 @@ void integrate_tsmp_2() {
 
     /* Debug output */
     if (screen_wrapper > 1 && task_id==1) {
-      printf("TSMP-PDAF-WRAPPER mype(w)=%d: CLM: advancing (%d clm time steps)\n",mype_world, tsclm);
+      printf("TSMP-PDAF-WRAPPER mype(w)=%d: CLM: pseudo advancing (%d clm time steps)\n",mype_world, tsclm);
     }
 
-    /* Integrate CLM */
-    clm_advance(&tsclm);
+    /* /\* Integrate CLM *\/ */
+    /* clm_advance(&tsclm); */
 
     /* Debug output */
     if (screen_wrapper > 1 && task_id==1) {
-      printf("TSMP-PDAF-WRAPPER mype(w)=%d: CLM: advancing finished\n", mype_world);
+      printf("TSMP-PDAF-WRAPPER mype(w)=%d: CLM: pseudo advancing finished\n", mype_world);
     }
 
 #endif
@@ -248,15 +248,16 @@ void integrate_tsmp_2() {
 #if defined COUP_OAS_PFL || defined PARFLOW_STAND_ALONE
     /* Debug output */
     if (screen_wrapper > 1 && task_id==1) {
-      printf("TSMP-PDAF-WRAPPER mype(w)=%d: Parflow: advancing (from %lf to %lf)\n",mype_world,t_start,t_start+(double)0.0);
+      printf("TSMP-PDAF-WRAPPER mype(w)=%d: Parflow: pseudo advancing (from %lf to %lf)\n",mype_world,t_start,t_start+(double)0.0);
     }
 
-    /* Integrate ParFlow */
-    enkfparflowadvance(tcycle, t_start,(double)0.0);
+    /* Pseudo-Integrate ParFlow (routine reduced to assembling the
+       state vector */
+    enkfparflowadvance(tcycle, t_start,(double)-1.0);
 
     /* Debug output */
     if (screen_wrapper > 1 && task_id==1) {
-      printf("TSMP-PDAF-WRAPPER mype(w)=%d: Parflow: advancing finished\n", mype_world);
+      printf("TSMP-PDAF-WRAPPER mype(w)=%d: Parflow: pseudo advancing finished\n", mype_world);
     }
 
     /* /\* Print ensemble statistics to PFB *\/ */
@@ -266,24 +267,24 @@ void integrate_tsmp_2() {
 #endif
   }
 
-  /* COSMO */
-  if(model == 2){
-#if defined COUP_OAS_COS
+/*   /\* COSMO *\/ */
+/*   if(model == 2){ */
+/* #if defined COUP_OAS_COS */
 
-    /* Number of time steps for COSMO */
-    int tscos;
-    tscos = 0.0;
-    tscos = tscos * dtmult_cosmo; /* Multiplier read from input */
+/*     /\* Number of time steps for COSMO *\/ */
+/*     int tscos; */
+/*     tscos = 0.0; */
+/*     tscos = tscos * dtmult_cosmo; /\* Multiplier read from input *\/ */
 
-    /* Debug output */
-    if (screen_wrapper > 1 && task_id==1) {
-      printf("TSMP-PDAF-WRAPPER mype(w)=%d: COSMO: tscos is %d",mype_world,tscos);
-    }
+/*     /\* Debug output *\/ */
+/*     if (screen_wrapper > 1 && task_id==1) { */
+/*       printf("TSMP-PDAF-WRAPPER mype(w)=%d: COSMO: tscos is %d",mype_world,tscos); */
+/*     } */
 
-    /* Integrate COSMO */
-    cosmo_advance(&tscos);
-#endif
-  }
+/*     /\* Integrate COSMO *\/ */
+/*     cosmo_advance(&tscos); */
+/* #endif */
+/*   } */
 
 }
 
