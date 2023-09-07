@@ -542,11 +542,11 @@ void enkfparflowadvance(int tcycle, double current_time, double dt)
 	     without update. No forward simulation between consecutive
 	     updates of pressure and soil moisture. */
 
-	  *pressure_out = GetPressureRichards(solver);
-	  *saturation_out = GetSaturationRichards(solver);
+	  pressure_out = GetPressureRichards(solver);
+	  saturation_out = GetSaturationRichards(solver);
 
 	  ProblemData *problem_data = GetProblemDataRichards(solver);
-	  *porosity_out    = ProblemDataPorosity(problem_data);
+	  porosity_out    = ProblemDataPorosity(problem_data);
 	}
 
 	handle = InitVectorUpdate(pressure_out, VectorUpdateAll);
