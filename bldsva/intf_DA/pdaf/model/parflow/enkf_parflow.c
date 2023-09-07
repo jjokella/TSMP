@@ -555,6 +555,13 @@ void enkfparflowadvance(int tcycle, double current_time, double dt)
 
 	  ProblemData *problem_data = GetProblemDataRichards(solver);
 	  Vector       *porosity_out    = ProblemDataPorosity(problem_data);
+
+	  handle = InitVectorUpdate(pressure_out, VectorUpdateAll);
+	  FinalizeVectorUpdate(handle);
+	  handle = InitVectorUpdate(porosity_out, VectorUpdateAll);
+	  FinalizeVectorUpdate(handle);
+	  handle = InitVectorUpdate(saturation_out, VectorUpdateAll);
+	  FinalizeVectorUpdate(handle);
 	}
 
 	/* create state vector: pressure */
