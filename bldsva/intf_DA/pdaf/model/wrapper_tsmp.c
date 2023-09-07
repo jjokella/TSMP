@@ -213,6 +213,10 @@ void integrate_tsmp() {
 
 void integrate_tsmp_2() {
 
+  /* Second update: soil moisture update */
+  pf_updateflag_tmp = pf_updateflag;
+  pf_updateflag = 2;
+
   /* Forward computation with length zero, new state vector
      assembled */
   
@@ -247,10 +251,6 @@ void integrate_tsmp_2() {
       printf("TSMP-PDAF-WRAPPER mype(w)=%d: Parflow: advancing (from %lf to %lf)\n",mype_world,t_start,t_start+(double)0.0);
     }
 
-    /* Second update: soil moisture */
-    pf_updateflag_tmp = pf_updateflag;
-    pf_updateflag = 2;
-    
     /* Integrate ParFlow */
     enkfparflowadvance(tcycle, t_start,(double)0.0);
 
