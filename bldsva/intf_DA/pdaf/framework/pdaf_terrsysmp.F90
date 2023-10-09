@@ -39,7 +39,7 @@ program pdaf_terrsysmp
         tcycle, model
     use mod_tsmp, only: initialize_tsmp, integrate_tsmp, integrate_tsmp_2, update_tsmp, update_tsmp_2, &
         & finalize_tsmp, tag_model_clm
-    use mod_assimilation, only: screen
+    use mod_assimilation, only: screen, local_range
 
 #if (defined CLMSA)
     ! use enkf_clm_mod, only: statcomm
@@ -56,6 +56,8 @@ program pdaf_terrsysmp
 
     integer :: ierror
     integer :: size
+
+    real :: local_range_tmp
 
     ! initialize mpi
     call mpi_init(ierror)
@@ -94,6 +96,10 @@ program pdaf_terrsysmp
         !call print_update_pfb()
         call update_tsmp()
 
+        ! Change the localization radius for LEnKF
+        local_range_tmp = local_range
+        local_range = 10000
+
         ! forward simulation of component models
         call integrate_tsmp_2()
 
@@ -105,6 +111,9 @@ program pdaf_terrsysmp
 
         !call print_update_pfb()
         call update_tsmp_2()
+
+        ! Localization radius back to command line input
+        local_range = local_range_tmp
 
         !call MPI_BARRIER(MPI_COMM_WORLD, IERROR)
         !print *,"Finished complete assimilation cycle", tcycle
