@@ -98,7 +98,7 @@ program pdaf_terrsysmp
 
         ! Change the localization radius for LEnKF
         local_range_tmp = local_range
-        local_range = 10000
+        local_range = 200
 
         ! forward simulation of component models
         call integrate_tsmp_2()
