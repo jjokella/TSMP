@@ -39,7 +39,7 @@ program pdaf_terrsysmp
         tcycle, model
     use mod_tsmp, only: initialize_tsmp, integrate_tsmp, integrate_tsmp_2, update_tsmp, update_tsmp_2, &
         & finalize_tsmp, tag_model_clm
-    use mod_assimilation, only: screen, local_range
+    use mod_assimilation, only: screen, local_range, rms_obs
 
 #if (defined CLMSA)
     ! use enkf_clm_mod, only: statcomm
@@ -58,6 +58,7 @@ program pdaf_terrsysmp
     integer :: size
 
     real :: local_range_tmp
+    real :: rms_obs_tmp
 
     ! initialize mpi
     call mpi_init(ierror)
@@ -100,6 +101,10 @@ program pdaf_terrsysmp
         local_range_tmp = local_range
         local_range = 200
 
+        ! Change the RMS error for observation generation
+        rms_obs_tmp = rms_obs
+        rms_obs = 0.03
+
         ! forward simulation of component models
         call integrate_tsmp_2()
 
@@ -114,6 +119,8 @@ program pdaf_terrsysmp
 
         ! Localization radius back to command line input
         local_range = local_range_tmp
+        ! RMS error for observation generation back to command line input
+        rms_obs = rms_obs_tmp
 
         !call MPI_BARRIER(MPI_COMM_WORLD, IERROR)
         !print *,"Finished complete assimilation cycle", tcycle
