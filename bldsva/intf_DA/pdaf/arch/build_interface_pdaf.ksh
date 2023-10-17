@@ -45,7 +45,7 @@ route "${cyellow}>> configure_da${cnormal}"
   c_configure_pdaf_arch
 
 #PDAF interface part configuration variables
-  importFlags=" "
+  importFlags=" -g -traceback "
   importFlagsOAS=" "
   importFlagsPFL=" "
   importFlagsCLM=" "
@@ -53,7 +53,7 @@ route "${cyellow}>> configure_da${cnormal}"
   importFlagsDA=" "
   cppdefs=" "
   # cppdefs+=" ${pf}-DOLD_TRUNCATE_SAT "
-  # cppdefs+=" ${pf}-DPDAF_DEBUG "
+  cppdefs+=" ${pf}-DPDAF_DEBUG "
   obj=' '
   libs=" -L$mpiPath -lmpich -L$netcdfPath/lib/ -lnetcdff -lnetcdf "
   libsOAS=" "
