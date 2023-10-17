@@ -110,7 +110,9 @@ module enkf_clm_mod
     endif
 
     if(clmupdate_texture.eq.1) then
+        print *,'clm_statevecsize (1) ', clm_statevecsize
         clm_statevecsize = clm_statevecsize + 2*((endg-begg+1)*nlevsoi)
+        print *,'clm_statevecsize (2) ', clm_statevecsize
     endif
 
     !hcp LST DA

@@ -225,8 +225,11 @@ void update_tsmp(){
 
 #if defined CLMSA
   if((model == tag_model_clm) && ((clmupdate_swc != 0) || (clmupdate_T != 0))){
+    printf("TSMP-PDAF-WRAPPER mype(w)=%d: CLM: before update_clm\n", mype_world);
     update_clm();
+    printf("TSMP-PDAF-WRAPPER mype(w)=%d: CLM: after update_clm / before print_update_clm\n", mype_world);
     print_update_clm(&tcycle, &total_steps);
+    printf("TSMP-PDAF-WRAPPER mype(w)=%d: CLM: update finished\n", mype_world);
   }
 #endif
 

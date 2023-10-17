@@ -81,23 +81,38 @@ subroutine print_update_clm(ts,ttot) bind(C,name="print_update_clm")
 
     if(masterproc) then
       call get_update_filename(update_filename)
+      print *,'update_filename ', update_filename
+      print *,'ts ', ts
       if(ts.eq.1) then
+        print *,'Create file '
         status =  nf90_create(update_filename, NF90_CLOBBER, il_file_id)
+        print *,'status ', status
         status =  nf90_def_dim(il_file_id, "x", ndlon, dimids(1))
+        print *,'status ', status
         status =  nf90_def_dim(il_file_id, "y", ndlat, dimids(2))
+        print *,'status ', status
         status =  nf90_def_dim(il_file_id, "z", nlevsoi, dimids(3))
+        print *,'status ', status
         status =  nf90_def_dim(il_file_id, "t", ttot, dimids(4))
+        print *,'status ', status
         if(clmprint_swc.eq.1)     status =  nf90_def_var(il_file_id, "swc", NF90_DOUBLE, dimids, ncvarid(1))
+        if(clmprint_swc.eq.1)     print *,'status ', status
         if(clmupdate_texture.eq.1) status =  nf90_def_var(il_file_id, "sand", NF90_DOUBLE, dimids, ncvarid(2))
+        if(clmupdate_texture.eq.1)     print *,'status ', status
         if(clmupdate_texture.eq.1) status =  nf90_def_var(il_file_id, "clay", NF90_DOUBLE, dimids, ncvarid(3))
+        if(clmupdate_texture.eq.1)     print *,'status ', status
         status =  nf90_enddef(il_file_id)
+        print *,'status ', status
       else
+        print *,'Open file '
         status = nf90_open(update_filename,NF90_WRITE,il_file_id)
+        print *,'status ', status
       endif
     endif
 
 
     if(clmprint_swc.eq.1) then
+      print *,'swc '
       swc  => clm3%g%l%c%cws%h2osoi_vol
       ! swc
       clmstate_tmp_local = transpose(swc)
@@ -121,6 +136,7 @@ subroutine print_update_clm(ts,ttot) bind(C,name="print_update_clm")
     end if
 
     if(clmupdate_texture.eq.1) then
+      print *,'sand '
       psand => clm3%g%l%c%cps%psand
       pclay => clm3%g%l%c%cps%pclay
       ! sand
@@ -143,6 +159,7 @@ subroutine print_update_clm(ts,ttot) bind(C,name="print_update_clm")
         !status = nf90_close(il_file_id)
       end if
 
+      print *,'clay '
       ! clay
       clmstate_tmp_local = transpose(pclay)
       call gather_data_to_master(clmstate_tmp_local,clmstate_tmp_global, clmlevel=nameg)
@@ -164,6 +181,7 @@ subroutine print_update_clm(ts,ttot) bind(C,name="print_update_clm")
       end if
     end if
 
+    print *,'close '
     if(masterproc) then
       status = nf90_close(il_file_id)
       deallocate(clmstate_out)
