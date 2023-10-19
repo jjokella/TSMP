@@ -39,7 +39,7 @@ program pdaf_terrsysmp
         tcycle, model
     use mod_tsmp, only: initialize_tsmp, integrate_tsmp, integrate_tsmp_2, update_tsmp, update_tsmp_2, &
         & finalize_tsmp, tag_model_clm
-    use mod_assimilation, only: screen, local_range, local_range_2, srange, srange_2, rms_obs
+    use mod_assimilation, only: screen, local_range, local_range_2, srange, srange_2, rms_obs, rms_obs_2
 
 #if (defined CLMSA)
     ! use enkf_clm_mod, only: statcomm
@@ -107,7 +107,7 @@ program pdaf_terrsysmp
 
         ! Change the RMS error for observation generation
         rms_obs_tmp = rms_obs
-        rms_obs = 0.03
+        rms_obs = rms_obs_2
 
         ! forward simulation of component models
         call integrate_tsmp_2()

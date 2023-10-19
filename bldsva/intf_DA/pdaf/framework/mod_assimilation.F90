@@ -113,6 +113,7 @@ MODULE mod_assimilation
 ! ! Settings for observations - available as command line options
   INTEGER :: delt_obs      ! time step interval between assimilation steps
   REAL    :: rms_obs       ! RMS error size for observation generation
+  REAL    :: rms_obs_2       ! RMS error size for observation generation for the second update
   INTEGER :: dim_obs       ! Number of observations
   INTEGER :: toffset      ! offset time step to shift all the assimilation steps
 

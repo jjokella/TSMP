@@ -49,7 +49,7 @@ SUBROUTINE init_pdaf_parse()
        ONLY: mype_world
   USE mod_assimilation, & ! Variables for assimilation
        ONLY: screen, filtertype, subtype, dim_ens, delt_obs, toffset, &
-       rms_obs, model_error, model_err_amp, incremental, type_forget, &
+       rms_obs, rms_obs_2, model_error, model_err_amp, incremental, type_forget, &
        forget, epsilon, rank_analysis_enkf, locweight, local_range, &
        local_range_2, srange_2, &
        srange, int_rediag, filename, type_trans, dim_obs, &
@@ -83,6 +83,8 @@ SUBROUTINE init_pdaf_parse()
   CALL parse(handle, toffset)
   handle = 'rms_obs'                 ! Assumed uniform RMS error of the observations
   CALL parse(handle, rms_obs)
+  handle = 'rms_obs_2'                 ! Assumed uniform RMS error of the observations
+  CALL parse(handle, rms_obs_2)
   handle = 'dim_obs'                 ! Number of observations
   CALL parse(handle, dim_obs)
 

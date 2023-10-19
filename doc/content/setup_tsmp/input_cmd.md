@@ -45,6 +45,10 @@ filter. See [Command Line Examples](#command-line-examples).
 `rms_obs` (real) Measurement error. This is the standard deviation of
 the Gaussian probability distribution of the measurements.
 
+## rms_obs_2 ##
+
+`rms_obs_2` (real) Measurement error for the second update.
+
 ## delt_obs ##
 
 `delt_obs` (integer) Number of data assimilation intervals (see

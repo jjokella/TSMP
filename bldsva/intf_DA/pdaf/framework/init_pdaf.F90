@@ -59,7 +59,7 @@ SUBROUTINE init_pdaf()
         ONLY: n_modeltasks, task_id, COMM_filter, COMM_couple, filterpe
     USE mod_assimilation, &      ! Variables for assimilation
         ONLY: dim_state_p, dim_state, screen, filtertype, subtype, toffset,&
-        dim_ens, rms_obs, model_error, model_err_amp, incremental, &
+        dim_ens, rms_obs, rms_obs_2, model_error, model_err_amp, incremental, &
         covartype, type_forget, forget, dim_bias, rank_analysis_enkf, &
         locweight, local_range, local_range_2, srange, int_rediag, filename, &
         type_trans, type_sqrt, delt_obs, toffset, dim_state_p_count, dim_state_p_stride,&
@@ -140,6 +140,7 @@ SUBROUTINE init_pdaf()
     ! *** specifications for observations ***
     ! avg. observation error (used for assimilation)
     rms_obs = 0.5    ! This error is the standard deviation
+    rms_obs_2 = 0.5    ! This error is the standard deviation
     ! for the Gaussian distribution
 
     ! *** Filter specific variables
