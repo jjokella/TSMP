@@ -215,7 +215,7 @@ void integrate_tsmp_2() {
 
   /* Second update: soil moisture update */
   pf_updateflag_tmp = pf_updateflag;
-  pf_updateflag = 2;
+  pf_updateflag = pf_updateflag_2;
 
   /* Forward computation with length zero, new state vector
      assembled */

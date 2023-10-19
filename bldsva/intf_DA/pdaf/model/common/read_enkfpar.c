@@ -60,6 +60,7 @@ void read_enkfpar(char *parname)
   }
   dt                    = iniparser_getdouble(pardict,"PF:dt",0);
   pf_updateflag         = iniparser_getint(pardict,"PF:updateflag",1);
+  pf_updateflag_2       = iniparser_getint(pardict,"PF:updateflag_2",1);
   pf_paramupdate        = iniparser_getint(pardict,"PF:paramupdate",0);
   pf_aniso_perm_y       = iniparser_getdouble(pardict,"PF:aniso_perm_y",1);
   pf_aniso_perm_z       = iniparser_getdouble(pardict,"PF:aniso_perm_z",1);

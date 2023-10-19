@@ -134,6 +134,11 @@ Must match with the specifications in the `*.pfidb` input.
     soil moisture content and pressure values. Soil moisture data are
     used to update pressure indirectly.
 
+### PF:updateflag_2 ###
+
+`PF:updateflag_2`: (integer) Type of state vector update in ParFlow
+for the second update.
+
 ### PF:gwmasking ###
 
 `PF:gwmasking`: (integer) Groundwater masking for assimilation of
