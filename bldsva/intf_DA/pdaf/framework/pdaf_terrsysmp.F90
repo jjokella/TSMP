@@ -39,7 +39,7 @@ program pdaf_terrsysmp
         tcycle, model
     use mod_tsmp, only: initialize_tsmp, integrate_tsmp, integrate_tsmp_2, update_tsmp, update_tsmp_2, &
         & finalize_tsmp, tag_model_clm
-    use mod_assimilation, only: screen, local_range, rms_obs
+    use mod_assimilation, only: screen, local_range, local_range_2, srange, srange_2, rms_obs
 
 #if (defined CLMSA)
     ! use enkf_clm_mod, only: statcomm
@@ -58,6 +58,7 @@ program pdaf_terrsysmp
     integer :: size
 
     real :: local_range_tmp
+    real :: srange_tmp
     real :: rms_obs_tmp
 
     ! initialize mpi
@@ -99,7 +100,10 @@ program pdaf_terrsysmp
 
         ! Change the localization radius for LEnKF
         local_range_tmp = local_range
-        local_range = 200
+        local_range = local_range_2
+
+        srange_tmp = srange
+        srange = srange_2
 
         ! Change the RMS error for observation generation
         rms_obs_tmp = rms_obs
@@ -119,6 +123,7 @@ program pdaf_terrsysmp
 
         ! Localization radius back to command line input
         local_range = local_range_tmp
+        srange = srange_tmp
         ! RMS error for observation generation back to command line input
         rms_obs = rms_obs_tmp
 

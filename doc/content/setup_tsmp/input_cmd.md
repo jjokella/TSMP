@@ -192,6 +192,8 @@ will be performed every assimilation cycle with an observation error of
 - 0.0 by default
 - any positive value should work.
 
+`local_range_2` (real) set localization radius for the second update
+
 `srange` (integer): the support radius of the localization, default:
 equal to `local_range`. Usage in `PDAF_local_weight.F90`
 - `locweight == 0`: `srange` is not used
@@ -203,6 +205,9 @@ equal to `local_range`. Usage in `PDAF_local_weight.F90`
   parametrization change of the 5th-order polynomial is at `srange/2`,
   see
   <https://github.com/PDAF/PDAF/blob/ed631034956dece8e91e8b588c4cf3aaa7916f49/src/PDAF_local_weight.F90#L147-L176>.
+
+`srange_2` (integer): the support radius of the localization for the
+second update.
 
 `locweight` (integer): set weight function for localization,
 - default=0
