@@ -61,7 +61,7 @@ SUBROUTINE init_pdaf()
         ONLY: dim_state_p, dim_state, screen, filtertype, subtype, toffset,&
         dim_ens, rms_obs, rms_obs_2, model_error, model_err_amp, incremental, &
         covartype, type_forget, forget, dim_bias, rank_analysis_enkf, &
-        locweight, local_range, local_range_2, srange, int_rediag, filename, &
+        locweight, local_range, local_range_2, srange, srange_2, int_rediag, filename, &
         type_trans, type_sqrt, delt_obs, toffset, dim_state_p_count, dim_state_p_stride,&
         dim_lag
 #if defined CLMSA
