@@ -653,13 +653,13 @@ void enkfparflowadvance(int tcycle, double current_time, double dt)
 	  /* hcp CRNS ends */
 
           /* masking option using UNsaturated cells only */
-          /* if(pf_gwmasking == 1){ */
-	  /*   PF2ENKF(pressure_out, subvec_p); */
-          /*   for(i=0;i<enkf_subvecsize;i++){ */
-          /*     subvec_gwind[i] = 1.0; */
-          /*     if(subvec_p[i]> 0.0) subvec_gwind[i] = 0.0; */
-          /*   } */
-          /* } */
+          if(pf_gwmasking == 1){
+	    PF2ENKF(pressure_out, subvec_p);
+            for(i=0;i<enkf_subvecsize;i++){
+              subvec_gwind[i] = 1.0;
+              if(subvec_p[i]> 0.0) subvec_gwind[i] = 0.0;
+            }
+          }
 
 	}
 
@@ -2157,11 +2157,11 @@ void update_parflow () {
     }
 
     /* Add an option here for masked update */
-    /* if(pf_gwmasking == 1){ */
-    /*   ENKF2PF_masked(saturation_in, pf_statevec,subvec_gwind); */
-    /* }else{ */
-    ENKF2PF(saturation_in, pf_statevec);
-    /* } */
+    if(pf_gwmasking == 1){
+      ENKF2PF_masked(saturation_in, pf_statevec,subvec_gwind);
+    }else{
+      ENKF2PF(saturation_in, pf_statevec);
+    }
 
     Problem * problem = GetProblemRichards(solver);
     double gravity = ProblemGravity(problem);
