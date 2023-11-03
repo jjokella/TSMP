@@ -536,6 +536,7 @@ Effect of `obs_interp_switch=1`:
  |           | `paramprintstat`        | 1             |
  |           | `olfmasking`            | 0             |
  |           | `olfmasking_param`      | 0             |
+ |           | `olfmasking_depth`      | 0             |
  | `[CLM]`   |                         |               |
  |           | `problemname`           | \-            |
  |           | `nprocs`                | 0             |
