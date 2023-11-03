@@ -1437,7 +1437,7 @@ void update_parflow () {
 	    pf_statevec[i] = subvec_p[i] + pf_dampfac_state * (pf_statevec[i] - subvec_p[i]);
 	  }
 	  else if(subvec_gwind[i] == 0.0){
-	    if(pf_dampmask_sm == 0){
+	    if(pf_dampswitch_sm == 1){
 	      /* State damping applied to SM */
 	      pf_statevec[i] = subvec_sat[i] * subvec_porosity[i] + pf_dampfac_state * (pf_statevec[i] - subvec_sat[i] * subvec_porosity[i]);
 	    }
