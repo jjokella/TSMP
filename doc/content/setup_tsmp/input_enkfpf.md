@@ -142,7 +142,7 @@ pressure data (`updateflag=1`) in ParFlow.
 
 -   2: Groundwater masking using mixed state vector.
 
-For assimilating SM data (`pf_updateflag=2`), the following masking
+For assimilating SM data (`updateflag=2`), the following masking
 options are included:
 
 -   0: No groundwater masking.
@@ -203,7 +203,7 @@ before assimilation and $p_{update}$ is $p$ after the assimilation.
 `PF:dampingfactor_state`: (real) Damping factor for state
 updates. Default `1.0`.
 
-Remark: Currently implemented for `pf_updateflag==1`.
+Remark: Currently implemented for `updateflag==1`.
 
 The damping factor should be chosen between `0.0` and `1.0`, where the
 inputs yield the following behavior:
