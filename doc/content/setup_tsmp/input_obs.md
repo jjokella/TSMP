@@ -34,6 +34,11 @@ the respective assimilation cycle. The observation files for ParFlow
 should contain the following variables which all should have the
 dimension `dim_obs` (except variable `dr` in CLM observations files):
 
+#### dampfac ####
+
+`dampfac`: (real) Input of a flexible damping factor for the
+particular observations in this observation file.
+
 ### ParFlow observation file variables ###
 
 If TSMP-PDAF is only applied with ParFlow, the following variables
