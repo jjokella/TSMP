@@ -222,10 +222,11 @@ and $x_{update}$ is the state vector after the assimilation.
 
 ### PF:damping_masking_sm ###
 `PF:damping_masking_sm`: (integer) Switch for applying damping factor
-for state updates to soil moisture. Default `0`.
+for state updates to soil moisture. Default `0` (no damping factor
+applied). Only applies for `PF:gwmasking==2`.
 
-General state damping is turned on by setting
-`PF:dampingfactor_state`.
+General state damping is turned on by setting `PF:dampingfactor_state`
+to a positive value smaller than `1.0`.
 
 - `0`: State damping vector applies to soil moisture
 - `1`: State damping vector does not apply to soil moisture
