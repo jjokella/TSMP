@@ -36,8 +36,13 @@ dimension `dim_obs` (except variable `dr` in CLM observations files):
 
 #### dampfac ####
 
-`dampfac`: (real) Input of a flexible damping factor for the
-particular observations in this observation file.
+`dampfac`: (real) Input of a flexible state damping factor for the
+particular observations in this observation file. This damping factor
+applies only to state updates and makes flexible the input from
+[PF:dampingfactor_state](./input_enkfpf.md#pfdampingfactor_state).
+
+For parameter update damping, see
+[PF:dampingfactor_param](./input_enkfpf.md#pfdampingfactor_param).
 
 ### ParFlow observation file variables ###
 
