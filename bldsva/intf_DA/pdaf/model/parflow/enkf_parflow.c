@@ -1433,11 +1433,17 @@ void update_parflow () {
 	/* Use pressures are saturation times porosity depending on mask */
 	for(i=0;i<enkf_subvecsize;i++){
 	  if(subvec_gwind[i] == 1.0){
+	    /* State damping factor always applies for Pressure */
 	    pf_statevec[i] = subvec_p[i] + pf_dampfac_state * (pf_statevec[i] - subvec_p[i]);
 	  }
 	  else if(subvec_gwind[i] == 0.0){
 	    if(pf_dampmask_sm == 0){
+	      /* State damping applied to SM */
 	      pf_statevec[i] = subvec_sat[i] * subvec_porosity[i] + pf_dampfac_state * (pf_statevec[i] - subvec_sat[i] * subvec_porosity[i]);
+	    }
+	    else{
+	      /* No damping factor for SM */
+	      pf_statevec[i] = subvec_sat[i] * subvec_porosity[i] + (pf_statevec[i] - subvec_sat[i] * subvec_porosity[i]);
 	    }
 	  }
 	  else{

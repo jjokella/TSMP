@@ -225,11 +225,11 @@ and $x_{update}$ is the state vector after the assimilation.
 for state updates to soil moisture. Default `0` (no damping factor
 applied). Only applies for `PF:gwmasking==2`.
 
+- `0`: State damping applies to soil moisture
+- `1`: State damping does not apply to soil moisture
+
 General state damping is turned on by setting `PF:dampingfactor_state`
 to a positive value smaller than `1.0`.
-
-- `0`: State damping vector applies to soil moisture
-- `1`: State damping vector does not apply to soil moisture
 
 ### PF:aniso_perm_y ###
 
