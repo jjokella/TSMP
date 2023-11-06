@@ -228,7 +228,7 @@ SUBROUTINE init_dim_obs_pdaf(step, dim_obs_p)
 
      call mpi_bcast(dampfac_state_flexible_in, 1, MPI_DOUBLE_PRECISION, 0, comm_filter, ierror)
      if (screen > 2) then
-       print *, "TSMP-PDAF mype(w)=", mype_world, ": init_dim_obs_pdaf: dampfac_state_flexiblein=", dampfac_state_flexible_in
+       print *, "TSMP-PDAF mype(w)=", mype_world, ": init_dim_obs_pdaf: dampfac_state_flexible_in=", dampfac_state_flexible_in
      end if
 
      ! Set C-version of dampfac_state_flexible with value read from obsfile

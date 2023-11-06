@@ -36,9 +36,10 @@ dimension `dim_obs` (except variable `dr` in CLM observations files):
 
 #### dampfac ####
 
-`dampfac`: (real) Input of a flexible state damping factor for the
-particular observations in this observation file. This damping factor
-applies only to state updates and makes flexible the input from
+`dampfac`: (real) Input of a time dependent state damping factor. The
+state vector for an update is given in the corresponding observation
+file. This damping factor applies only to state updates and, when
+existing, replaces the general input from
 [PF:dampingfactor_state](./input_enkfpf.md#pfdampingfactor_state).
 
 For parameter update damping, see
