@@ -34,12 +34,12 @@ the respective assimilation cycle. The observation files for ParFlow
 should contain the following variables which all should have the
 dimension `dim_obs` (except variable `dr` in CLM observations files):
 
-#### dampfac ####
+#### dampfac_state ####
 
-`dampfac`: (real) Input of a time dependent state damping factor. The
-state vector for an update is given in the corresponding observation
-file. This damping factor applies only to state updates and, when
-existing, replaces the general input from
+`dampfac_state`: (real) Input of a time dependent state damping
+factor. The state vector for an update is given in the corresponding
+observation file. This damping factor applies only to state updates
+and, when existing, replaces the general input from
 [PF:dampingfactor_state](./input_enkfpf.md#pfdampingfactor_state).
 
 For parameter update damping, see

@@ -82,7 +82,7 @@ contains
     character (len = *), parameter :: dim_nx_name = "dim_nx"
     character (len = *), parameter :: dim_ny_name = "dim_ny"
     character (len = *), parameter :: var_id_name = "var_id"
-    character (len = *), parameter :: damp_name = "dampfac"
+    character (len = *), parameter :: damp_name = "dampfac_state"
     character(len = nf90_max_name) :: RecordDimName
     integer :: dimid, status
     integer :: haserr
