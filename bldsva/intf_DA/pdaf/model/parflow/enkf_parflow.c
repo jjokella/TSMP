@@ -638,6 +638,16 @@ void enkfparflowadvance(int tcycle, double current_time, double dt)
 	    soilay[isc] *= dz_glob;
 	  }
 	  /* hcp CRNS ends */
+
+          /* masking option using UNsaturated cells only */
+          if(pf_gwmasking == 1){
+	    PF2ENKF(pressure_out, subvec_p);
+            for(i=0;i<enkf_subvecsize;i++){
+              subvec_gwind[i] = 1.0;
+              if(subvec_p[i]> 0.0) subvec_gwind[i] = 0.0;
+            }
+          }
+
 	}
 
 	/* create state vector: joint swc + pressure */
@@ -1405,6 +1415,18 @@ void update_parflow () {
 
   int do_pupd=0;
 
+  /* Update damping factors if set in observation file */
+  if(is_dampfac_state_time_dependent){
+    double pf_dampfac_state_tmp;
+    pf_dampfac_state_tmp = pf_dampfac_state;
+    pf_dampfac_state = dampfac_state_time_dependent;
+  }
+  if(is_dampfac_param_time_dependent){
+    double pf_dampfac_param_tmp;
+    pf_dampfac_param_tmp = pf_dampfac_param;
+    pf_dampfac_param = dampfac_param_time_dependent;
+  }
+
   /* state damping */
   if(pf_updateflag == 1){
     if(pf_gwmasking == 0){
@@ -1418,10 +1440,18 @@ void update_parflow () {
 	/* Use pressures are saturation times porosity depending on mask */
 	for(i=0;i<enkf_subvecsize;i++){
 	  if(subvec_gwind[i] == 1.0){
+	    /* State damping factor always applies for Pressure */
 	    pf_statevec[i] = subvec_p[i] + pf_dampfac_state * (pf_statevec[i] - subvec_p[i]);
 	  }
 	  else if(subvec_gwind[i] == 0.0){
-	    pf_statevec[i] = subvec_sat[i] * subvec_porosity[i] + pf_dampfac_state * (pf_statevec[i] - subvec_sat[i] * subvec_porosity[i]);
+	    if(pf_dampswitch_sm == 1){
+	      /* State damping applied to SM */
+	      pf_statevec[i] = subvec_sat[i] * subvec_porosity[i] + pf_dampfac_state * (pf_statevec[i] - subvec_sat[i] * subvec_porosity[i]);
+	    }
+	    else{
+	      /* No damping factor for SM */
+	      pf_statevec[i] = subvec_sat[i] * subvec_porosity[i] + (pf_statevec[i] - subvec_sat[i] * subvec_porosity[i]);
+	    }
 	  }
 	  else{
 	    printf("ERROR: pf_gwmasking = 2, but subvec_gwind is neither 0.0 nor 1.0\n");
@@ -1795,6 +1825,14 @@ void update_parflow () {
           alpha_counter++;
       }
 
+      /* Reset damping factors to original value */
+      if(is_dampfac_state_time_dependent){
+	pf_dampfac_state = pf_dampfac_state_tmp;
+      }
+      if(is_dampfac_param_time_dependent){
+	pf_dampfac_param = pf_dampfac_param_tmp;
+      }
+
       /* print updated parameter values */
       if(pf_paramprintensemble){
           enkf_printstatistics_pfb(dat_ksat,"update.param.ksat",tstartcycle + stat_dumpoffset,pfoutfile_ens,3);
@@ -2045,13 +2083,21 @@ void update_parflow () {
       /*   printf("Warning (update_parflow): saturation > 1.0\n"); */
       /* } */
     }
-    ENKF2PF(saturation_in, pf_statevec);
+
+    /* Add an option here for masked update */
+    if(pf_gwmasking == 1){
+      ENKF2PF_masked(saturation_in, pf_statevec,subvec_gwind);
+    }else{
+      ENKF2PF(saturation_in, pf_statevec);
+    }
+
     Problem * problem = GetProblemRichards(solver);
     double gravity = ProblemGravity(problem);
     Vector * pressure_in = GetPressureRichards(solver);
     Vector * density = GetDensityRichards(solver);
     ProblemData * problem_data = GetProblemDataRichards(solver);
     PFModule * problem_saturation = ProblemSaturation(problem);
+
     // convert saturation to pressure
     global_ptr_this_pf_module = problem_saturation;
     SaturationToPressure(saturation_in,	pressure_in, density, gravity, problem_data, CALCFCN, 1);

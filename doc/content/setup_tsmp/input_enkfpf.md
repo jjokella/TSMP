@@ -34,6 +34,7 @@ paramupdate        =
 paramupdate_frequency =
 dampingfactor_param =
 dampingfactor_state =
+damping_switch_sm =
 aniso_perm_y       =
 aniso_perm_z       =
 aniso_use_parflow  =
@@ -144,6 +145,13 @@ pressure data (`updateflag=1`) in ParFlow.
 
 -   2: Groundwater masking using mixed state vector.
 
+For assimilating SM data (`updateflag=2`), the following masking
+options are included:
+
+-   0: No groundwater masking.
+
+-   1: Groundwater masking using **unsaturated** cells only.
+
 ### PF:paramupdate ###
 
 `PF:paramupdate`: (integer) Flag for parameter update
@@ -198,7 +206,7 @@ before assimilation and $p_{update}$ is $p$ after the assimilation.
 `PF:dampingfactor_state`: (real) Damping factor for state
 updates. Default `1.0`.
 
-Remark: Currently implemented for `pf_updateflag==1`.
+Remark: Currently implemented for `updateflag==1`.
 
 The damping factor should be chosen between `0.0` and `1.0`, where the
 inputs yield the following behavior:
@@ -214,6 +222,16 @@ x_{update, damped} &= x + \mathtt{dampingfactor\_state} \cdot ( x_{update} - x )
 where $x$ is the state vector (without parameters) before assimilation
 and $x_{update}$ is the state vector after the assimilation.
 
+### PF:damping_switch_sm ###
+`PF:damping_switch_sm`: (integer) Switch for applying damping factor
+for state updates to soil moisture. Default `1` (damping factor
+applied). Only applies for `PF:gwmasking==2`.
+
+- `0`: State damping not applied to soil moisture
+- `1`: State damping applied to soil moisture
+
+General state damping is turned on by setting `PF:dampingfactor_state`
+to a positive value smaller than `1.0`.
 
 ### PF:aniso_perm_y ###
 
@@ -526,6 +544,7 @@ Effect of `obs_interp_switch=1`:
  |           | `paramupdate_frequency` | 1             |
  |           | `dampingfactor_param`   | 1.0           |
  |           | `dampingfactor_state`   | 1.0           |
+ |           | `damping_switch_sm`     | 1             |
  |           | `aniso_perm_y`          | 1.0           |
  |           | `aniso_perm_z`          | 1.0           |
  |           | `aniso_use_parflow`     | 0             |
