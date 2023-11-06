@@ -94,7 +94,7 @@ SUBROUTINE init_dim_obs_pdaf(step, dim_obs_p)
        clm_obs, &
        var_id_obs_nc, dim_nx, dim_ny, &
        clmobs_lon, clmobs_lat, clmobs_layer, clmobs_dr, clm_obserr, &
-       crns_flag, depth_obs, dampfac_state_flexible_in
+       crns_flag, depth_obs, dampfac_state_flexible_in, dampfac_param_flexible_in
   use mod_tsmp, &
       only: idx_map_subvec2state_fortran, tag_model_parflow, enkf_subvecsize, &
       nx_glob, ny_glob, nz_glob, &
@@ -105,7 +105,7 @@ SUBROUTINE init_dim_obs_pdaf(step, dim_obs_p)
 #endif
 #endif
       tag_model_clm, point_obs, obs_interp_switch, is_dampfac_state_flexible, &
-      dampfac_state_flexible
+      dampfac_state_flexible, is_dampfac_param_flexible, dampfac_param_flexible
 
 #ifndef PARFLOW_STAND_ALONE
 #ifndef OBS_ONLY_PARFLOW
@@ -180,8 +180,9 @@ SUBROUTINE init_dim_obs_pdaf(step, dim_obs_p)
   ! Read observation file
   ! ---------------------
 
-  ! Default: now local damping factor
+  ! Default: no local damping factors
   is_dampfac_state_flexible = 0
+  is_dampfac_param_flexible = 0
 
   !  if I'm root in filter, read the nc file
   is_multi_observation_files = .true.
@@ -211,8 +212,9 @@ SUBROUTINE init_dim_obs_pdaf(step, dim_obs_p)
      call mpi_bcast(dim_nx, 1, MPI_INTEGER, 0, comm_filter, ierror)
      call mpi_bcast(dim_ny, 1, MPI_INTEGER, 0, comm_filter, ierror)
   endif
-  ! broadcast damping factor flag
+  ! broadcast damping factor flags
   call mpi_bcast(is_dampfac_state_flexible, 1, MPI_INTEGER, 0, comm_filter, ierror)
+  call mpi_bcast(is_dampfac_param_flexible, 1, MPI_INTEGER, 0, comm_filter, ierror)
 
   ! broadcast dampfac_state_flexible_in
   if(is_dampfac_state_flexible.eq.1) then
@@ -240,6 +242,32 @@ SUBROUTINE init_dim_obs_pdaf(step, dim_obs_p)
 
   end if
 
+  ! broadcast dampfac_param_flexible_in
+  if(is_dampfac_param_flexible.eq.1) then
+
+     if (mype_filter .ne. 0) then ! for all non-master proc
+       if(allocated(dampfac_param_flexible_in)) deallocate(dampfac_param_flexible_in)
+       allocate(dampfac_param_flexible_in(1))
+     end if
+
+     if (screen > 2) then
+       print *, "TSMP-PDAF mype(w)=", mype_world, ": Before setting dampfac_param_flexible"
+     end if
+
+     call mpi_bcast(dampfac_param_flexible_in, 1, MPI_DOUBLE_PRECISION, 0, comm_filter, ierror)
+     if (screen > 2) then
+       print *, "TSMP-PDAF mype(w)=", mype_world, ": init_dim_obs_pdaf: dampfac_param_flexible_in=", dampfac_param_flexible_in
+     end if
+
+     ! Set C-version of dampfac_param_flexible with value read from obsfile
+     dampfac_param_flexible = dampfac_param_flexible_in(1)
+
+     if (screen > 2) then
+       print *, "TSMP-PDAF mype(w)=", mype_world, ": init_dim_obs_pdaf: dampfac_param_flexible=", dampfac_param_flexible
+     end if
+
+  end if
+  
   ! Allocate observation arrays for non-root procs
   ! ----------------------------------------------
   if (mype_filter .ne. 0) then ! for all non-master proc

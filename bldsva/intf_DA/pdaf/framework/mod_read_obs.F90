@@ -53,6 +53,7 @@ module mod_read_obs
   integer :: crns_flag=0   !hcp
   real, allocatable :: depth_obs(:)   !hcp
   real, allocatable :: dampfac_state_flexible_in(:)
+  real, allocatable :: dampfac_param_flexible_in(:)
 contains
 
   !> @author Wolfgang Kurtz, Guowei He, Mukund Pondkule
@@ -71,18 +72,21 @@ contains
     ! use mod_parallel_pdaf, &
     !      only: comm_filter
     use mod_tsmp, &
-        only: point_obs, obs_interp_switch, is_dampfac_state_flexible
+        only: point_obs, obs_interp_switch, is_dampfac_state_flexible, &
+        is_dampfac_param_flexible
     use netcdf
     implicit none
     integer :: ncid
     character (len = *), parameter :: dim_name = "dim_obs"
     integer :: var_id_varid !, x, y
-    integer :: damp_varid
+    integer :: damp_state_varid
+    integer :: damp_param_varid
     ! integer :: comm, omode, info
     character (len = *), parameter :: dim_nx_name = "dim_nx"
     character (len = *), parameter :: dim_ny_name = "dim_ny"
     character (len = *), parameter :: var_id_name = "var_id"
-    character (len = *), parameter :: damp_name = "dampfac_state"
+    character (len = *), parameter :: damp_state_name = "dampfac_state"
+    character (len = *), parameter :: damp_param_name = "dampfac_param"
     character(len = nf90_max_name) :: RecordDimName
     integer :: dimid, status
     integer :: haserr
@@ -107,7 +111,8 @@ contains
     character (len = *), parameter :: y_idx_interp_d_name = "iy_interp_d"
     integer :: has_obs_pf
     integer :: has_depth
-    integer :: has_damping
+    integer :: has_damping_state
+    integer :: has_damping_param
 #endif    
 #endif
 
@@ -169,22 +174,38 @@ contains
         end if
     end if
 
-    ! Damping factor
-    ! --------------
-    ! Input of flexible damping factor (could be different for each
-    ! time step)
-    has_damping = nf90_inq_varid(ncid, damp_name, damp_varid)
+    ! Damping factors
+    ! ---------------
+    ! Input of flexible damping factors (could be different for each
+    ! update step)
+    has_damping_state = nf90_inq_varid(ncid, damp_state_name, damp_state_varid)
 
-    if(has_damping == nf90_noerr) then
+    if(has_damping_state == nf90_noerr) then
 
       is_dampfac_state_flexible = 1
 
       if(allocated(dampfac_state_flexible_in)) deallocate(dampfac_state_flexible_in)
       allocate(dampfac_state_flexible_in(1))
 
-      call check(nf90_get_var(ncid, damp_varid, dampfac_state_flexible_in))
+      call check(nf90_get_var(ncid, damp_state_varid, dampfac_state_flexible_in))
       if (screen > 2) then
         print *, "TSMP-PDAF mype(w)=", mype_world, ": dampfac_state_flexible_in=", dampfac_state_flexible_in(1)
+      end if
+
+    end if
+
+    has_damping_param = nf90_inq_varid(ncid, damp_param_name, damp_param_varid)
+
+    if(has_damping_param == nf90_noerr) then
+
+      is_dampfac_param_flexible = 1
+
+      if(allocated(dampfac_param_flexible_in)) deallocate(dampfac_param_flexible_in)
+      allocate(dampfac_param_flexible_in(1))
+
+      call check(nf90_get_var(ncid, damp_param_varid, dampfac_param_flexible_in))
+      if (screen > 2) then
+        print *, "TSMP-PDAF mype(w)=", mype_world, ": dampfac_param_flexible_in=", dampfac_param_flexible_in(1)
       end if
 
     end if
