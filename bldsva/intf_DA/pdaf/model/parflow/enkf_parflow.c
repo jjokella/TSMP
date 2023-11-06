@@ -1416,15 +1416,15 @@ void update_parflow () {
   int do_pupd=0;
 
   /* Update damping factors if set in observation file */
-  if(is_dampfac_state_flexible){
+  if(is_dampfac_state_time_dependent){
     double pf_dampfac_state_tmp;
     pf_dampfac_state_tmp = pf_dampfac_state;
-    pf_dampfac_state = dampfac_state_flexible;
+    pf_dampfac_state = dampfac_state_time_dependent;
   }
-  if(is_dampfac_param_flexible){
+  if(is_dampfac_param_time_dependent){
     double pf_dampfac_param_tmp;
     pf_dampfac_param_tmp = pf_dampfac_param;
-    pf_dampfac_param = dampfac_param_flexible;
+    pf_dampfac_param = dampfac_param_time_dependent;
   }
 
   /* state damping */
@@ -1826,10 +1826,10 @@ void update_parflow () {
       }
 
       /* Reset damping factors to original value */
-      if(is_dampfac_state_flexible){
+      if(is_dampfac_state_time_dependent){
 	pf_dampfac_state = pf_dampfac_state_tmp;
       }
-      if(is_dampfac_param_flexible){
+      if(is_dampfac_param_time_dependent){
 	pf_dampfac_param = pf_dampfac_param_tmp;
       }
 

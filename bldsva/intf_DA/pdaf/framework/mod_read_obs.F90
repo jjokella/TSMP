@@ -52,8 +52,8 @@ module mod_read_obs
   integer :: dim_nx, dim_ny
   integer :: crns_flag=0   !hcp
   real, allocatable :: depth_obs(:)   !hcp
-  real, allocatable :: dampfac_state_flexible_in(:)
-  real, allocatable :: dampfac_param_flexible_in(:)
+  real, allocatable :: dampfac_state_time_dependent_in(:)
+  real, allocatable :: dampfac_param_time_dependent_in(:)
 contains
 
   !> @author Wolfgang Kurtz, Guowei He, Mukund Pondkule
@@ -72,8 +72,8 @@ contains
     ! use mod_parallel_pdaf, &
     !      only: comm_filter
     use mod_tsmp, &
-        only: point_obs, obs_interp_switch, is_dampfac_state_flexible, &
-        is_dampfac_param_flexible
+        only: point_obs, obs_interp_switch, is_dampfac_state_time_dependent, &
+        is_dampfac_param_time_dependent
     use netcdf
     implicit none
     integer :: ncid
@@ -182,14 +182,14 @@ contains
 
     if(has_damping_state == nf90_noerr) then
 
-      is_dampfac_state_flexible = 1
+      is_dampfac_state_time_dependent = 1
 
-      if(allocated(dampfac_state_flexible_in)) deallocate(dampfac_state_flexible_in)
-      allocate(dampfac_state_flexible_in(1))
+      if(allocated(dampfac_state_time_dependent_in)) deallocate(dampfac_state_time_dependent_in)
+      allocate(dampfac_state_time_dependent_in(1))
 
-      call check(nf90_get_var(ncid, damp_state_varid, dampfac_state_flexible_in))
+      call check(nf90_get_var(ncid, damp_state_varid, dampfac_state_time_dependent_in))
       if (screen > 2) then
-        print *, "TSMP-PDAF mype(w)=", mype_world, ": dampfac_state_flexible_in=", dampfac_state_flexible_in(1)
+        print *, "TSMP-PDAF mype(w)=", mype_world, ": dampfac_state_time_dependent_in=", dampfac_state_time_dependent_in(1)
       end if
 
     end if
@@ -198,14 +198,14 @@ contains
 
     if(has_damping_param == nf90_noerr) then
 
-      is_dampfac_param_flexible = 1
+      is_dampfac_param_time_dependent = 1
 
-      if(allocated(dampfac_param_flexible_in)) deallocate(dampfac_param_flexible_in)
-      allocate(dampfac_param_flexible_in(1))
+      if(allocated(dampfac_param_time_dependent_in)) deallocate(dampfac_param_time_dependent_in)
+      allocate(dampfac_param_time_dependent_in(1))
 
-      call check(nf90_get_var(ncid, damp_param_varid, dampfac_param_flexible_in))
+      call check(nf90_get_var(ncid, damp_param_varid, dampfac_param_time_dependent_in))
       if (screen > 2) then
-        print *, "TSMP-PDAF mype(w)=", mype_world, ": dampfac_param_flexible_in=", dampfac_param_flexible_in(1)
+        print *, "TSMP-PDAF mype(w)=", mype_world, ": dampfac_param_time_dependent_in=", dampfac_param_time_dependent_in(1)
       end if
 
     end if
