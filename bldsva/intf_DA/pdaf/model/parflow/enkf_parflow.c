@@ -1417,6 +1417,8 @@ void update_parflow () {
 
   /* Update damping factor if set in observation file */
   if(is_dampfac_state_flexible){
+    double pf_dampfac_state_tmp;
+    pf_dampfac_state_tmp = pf_dampfac_state;
     pf_dampfac_state = dampfac_state_flexible;
   }
 
@@ -1816,6 +1818,12 @@ void update_parflow () {
           pf_statevec[ioff+i+2] = exp(pf_statevec[ioff+i+2]);
           dat_alpha[alpha_counter] = pf_statevec[ioff+i+2];
           alpha_counter++;
+      }
+
+      /* reset damping factors to original value */
+      /* Update damping factor if set in observation file */
+      if(is_dampfac_state_flexible){
+	pf_dampfac_state = pf_dampfac_state_tmp;
       }
 
       /* print updated parameter values */
