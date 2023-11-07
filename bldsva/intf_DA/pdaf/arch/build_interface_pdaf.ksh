@@ -18,9 +18,9 @@ route "${cyellow}>> configure_da${cnormal}"
 #PDAF part configuration variables
   export PDAF_DIR=$dadir
   if [[ $compiler == "Gnu" ]]; then
-    export PDAF_ARCH=linux_gfortran_openmpi
+    export PDAF_ARCH=linux_gfortran_openmpi_tsmpv1
   else
-    export PDAF_ARCH=linux_ifort
+    export PDAF_ARCH=linux_ifort_tsmpv1
   fi
 
   if [[ $profiling == "scalasca" ]]; then
