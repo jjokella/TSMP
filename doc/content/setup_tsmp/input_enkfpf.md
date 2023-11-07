@@ -34,6 +34,7 @@ paramupdate        =
 paramupdate_frequency =
 dampingfactor_param =
 dampingfactor_state =
+damping_switch_sm =
 aniso_perm_y       =
 aniso_perm_z       =
 aniso_use_parflow  =
@@ -118,8 +119,9 @@ Must match with the specifications in the `*.pfidb` input.
 `PF:updateflag`: (integer) Type of state vector update in ParFlow.
 
 -   1: Assimilation of pressure data. State vector consists of
-    pressure values and is directly updated with pressure
-    observations.
+    pressure values (groundwater masking or a mixed state vector is
+    introduced through `PF:gwmasking`) and is directly updated with
+    pressure observations.
 
 -   2: Assimilation of soil moisture data. State vector consists of
     soil moisture content values and is updated with soil moisture
@@ -133,13 +135,20 @@ Must match with the specifications in the `*.pfidb` input.
 ### PF:gwmasking ###
 
 `PF:gwmasking`: (integer) Groundwater masking for assimilation of
-pressure data (updateflag=1) in ParFlow.
+pressure data (`updateflag=1`) in ParFlow.
 
 -   0: No groundwater masking.
 
 -   1: Groundwater masking using saturated cells only.
 
 -   2: Groundwater masking using mixed state vector.
+
+For assimilating SM data (`updateflag=2`), the following masking
+options are included:
+
+-   0: No groundwater masking.
+
+-   1: Groundwater masking using **unsaturated** cells only.
 
 ### PF:paramupdate ###
 
@@ -195,7 +204,7 @@ before assimilation and $p_{update}$ is $p$ after the assimilation.
 `PF:dampingfactor_state`: (real) Damping factor for state
 updates. Default `1.0`.
 
-Remark: Currently implemented for `pf_updateflag==1`.
+Remark: Currently implemented for `updateflag==1`.
 
 The damping factor should be chosen between `0.0` and `1.0`, where the
 inputs yield the following behavior:
@@ -211,6 +220,16 @@ x_{update, damped} &= x + \mathtt{dampingfactor\_state} \cdot ( x_{update} - x )
 where $x$ is the state vector (without parameters) before assimilation
 and $x_{update}$ is the state vector after the assimilation.
 
+### PF:damping_switch_sm ###
+`PF:damping_switch_sm`: (integer) Switch for applying damping factor
+for state updates to soil moisture. Default `1` (damping factor
+applied). Only applies for `PF:gwmasking==2`.
+
+- `0`: State damping not applied to soil moisture
+- `1`: State damping applied to soil moisture
+
+General state damping is turned on by setting `PF:dampingfactor_state`
+to a positive value smaller than `1.0`.
 
 ### PF:aniso_perm_y ###
 
@@ -425,6 +444,17 @@ assimilation will be applied each 12 hours.
 simulated for 1 24-hour-step between data assimilation times. So an
 assimilation will be applied each 24 hours.
 
+**Remark**: Performance analysis has shown that for an assimilation
+every `n` hours, it is beneficial to specify `da_interval=n`,
+`delt_obs 1`, instead of `da_interval=1`, `delt_obs n`.
+
+In general, it is beneficial to set `da_interval` as large as possible
+for a given setup. One reason is that after each simulation time of
+`da_interval`, the routines `assimilate_pdaf` and `update_tsmp` are
+called, assembling EnKF state vectors and calling the PDAF
+library. Maximizing `da_interal`, minimizes the number of these calls
+and thus reduces compute time.
+
 ### DA:stat_dumpoffset ###
 
 `DA:stat_dumpoffset`: File number offset for the data assimilation
@@ -482,6 +512,7 @@ Effect of `obs_interp_switch=1`:
  |           | `paramupdate_frequency` | 1             |
  |           | `dampingfactor_param`   | 1.0           |
  |           | `dampingfactor_state`   | 1.0           |
+ |           | `damping_switch_sm`     | 1             |
  |           | `aniso_perm_y`          | 1.0           |
  |           | `aniso_perm_z`          | 1.0           |
  |           | `aniso_use_parflow`     | 0             |
