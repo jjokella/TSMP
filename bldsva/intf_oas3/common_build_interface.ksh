@@ -627,21 +627,21 @@ route "${cyellow}<<< c_substitutions_pfl${cnormal}"
 c_substitutions_pdaf(){
 route "${cyellow}>>> c_substitutions_pdaf${cnormal}"
 
-  comment "   mkdir  $dadir/interface"
-    mkdir -p $dadir/interface  >> $log_file 2>> $err_file
-  check
+  # comment "   mkdir  $dadir/interface"
+  #   mkdir -p $dadir/interface  >> $log_file 2>> $err_file
+  # check
 
-  comment "   cp pdaf interface model to $dadir/interface"
-    patch $rootdir/bldsva/intf_DA/pdaf/model $dadir/interface
-  check
+  # comment "   cp pdaf interface model to $dadir/interface"
+  #   patch $rootdir/bldsva/intf_DA/pdaf/model $dadir/interface
+  # check
 
-  comment "   cp pdaf interface framework to $dadir/interface"
-    patch $rootdir/bldsva/intf_DA/pdaf/framework $dadir/interface
-  check
+  # comment "   cp pdaf interface framework to $dadir/interface"
+  #   patch $rootdir/bldsva/intf_DA/pdaf/framework $dadir/interface
+  # check
 
-  comment "   mkdir $dadir/lib"
-    mkdir -p $dadir/lib >> $log_file 2>> $err_file
-  check
+  # comment "   mkdir $dadir/lib"
+  #   mkdir -p $dadir/lib >> $log_file 2>> $err_file
+  # check
 
 route "${cyellow}<<< c_substitutions_pdaf${cnormal}"
 }
@@ -652,9 +652,9 @@ route "${cyellow}>>> c_configure_pdaf_arch${cnormal}"
 #PDAF arch part
   file=$dadir/make.arch/${PDAF_ARCH}.h
 
-  comment "   cp pdaf config to $dadir"
-    cp $rootdir/bldsva/intf_DA/pdaf/arch/config/${PDAF_ARCH}.h $file >> $log_file 2>> $err_file
-  check
+  # comment "   cp pdaf config to $dadir"
+  #   cp $rootdir/bldsva/intf_DA/pdaf/arch/config/${PDAF_ARCH}.h $file >> $log_file 2>> $err_file
+  # check
 
   comment "   sed comFC dir to $file"
   sed -i "s@__comFC__@${comFC}@" $file >> $log_file 2>> $err_file
@@ -693,9 +693,9 @@ route "${cyellow}>>> c_configure_pdaf${cnormal}"
   file1=$dadir/interface/model/Makefile
   file2=$dadir/interface/framework/Makefile
   comment "   cp pdaf interface Makefiles to $dadir"
-    cp $rootdir/bldsva/intf_DA/pdaf/model/Makefile  $file1 >> $log_file 2>> $err_file
+    cp ${file1}_tsmpv1  $file1 >> $log_file 2>> $err_file
   check
-    cp $rootdir/bldsva/intf_DA/pdaf/framework/Makefile  $file2 >> $log_file 2>> $err_file
+    cp ${file2}_tsmpv1  $file2 >> $log_file 2>> $err_file
   check
 
   comment "   sed bindir to Makefiles"
