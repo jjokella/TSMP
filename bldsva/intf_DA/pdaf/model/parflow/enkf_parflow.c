@@ -1416,13 +1416,13 @@ void update_parflow () {
   int do_pupd=0;
 
   /* Update damping factors if set in observation file */
+  double pf_dampfac_state_tmp;
+  double pf_dampfac_param_tmp;
   if(is_dampfac_state_time_dependent){
-    double pf_dampfac_state_tmp;
     pf_dampfac_state_tmp = pf_dampfac_state;
     pf_dampfac_state = dampfac_state_time_dependent;
   }
   if(is_dampfac_param_time_dependent){
-    double pf_dampfac_param_tmp;
     pf_dampfac_param_tmp = pf_dampfac_param;
     pf_dampfac_param = dampfac_param_time_dependent;
   }
