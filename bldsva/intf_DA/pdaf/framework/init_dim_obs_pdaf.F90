@@ -145,6 +145,8 @@ SUBROUTINE init_dim_obs_pdaf(step, dim_obs_p)
   INTEGER :: count_interp ! Counter for interpolation grid cells
   INTEGER :: m,l          ! Counters
   INTEGER :: idx         ! Computed Index
+  INTEGER :: ifilter     !Counter filterpes
+  INTEGER :: sum_local_dims_obs     !Sum in array local_dims_obs
   logical :: is_multi_observation_files
   character (len = 110) :: current_observation_filename
   integer,allocatable :: local_dis(:),local_dim(:)
@@ -875,6 +877,22 @@ SUBROUTINE init_dim_obs_pdaf(step, dim_obs_p)
   ! Gather array of local observation dimensions 
   call mpi_allgather(dim_obs_p, 1, MPI_INTEGER, local_dims_obs, 1, MPI_INTEGER, &
        comm_filter, ierror)
+
+  ! Check: Sum of local observation dimensions equals global observation dimension
+  if (mype_filter==0) then
+    sum_local_dims_obs = 0
+    do ifilter = 1, npes_filter
+      sum_local_dims_obs = sum_local_dims_obs + local_dims_obs(ifilter)
+    end do
+
+    if (.not. sum_local_dims_obs == dim_obs) then
+      print *, "TSMP-PDAF mype(w)=", mype_world, ": ERROR Sum of local observation dimensions"
+      print *, "sum_local_dims_obs=", sum_local_dims_obs
+      print *, "dim_obs=", dim_obs
+      call mpi_abort(MPI_COMM_WORLD, 1, ierror)
+    end if
+
+  end if
 
 #ifndef CLMSA
 #ifndef OBS_ONLY_CLM
