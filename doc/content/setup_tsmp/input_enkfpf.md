@@ -34,7 +34,7 @@ paramupdate        =
 paramupdate_frequency =
 dampingfactor_param =
 dampingfactor_state =
-damping_masking_sm =
+damping_switch_sm =
 aniso_perm_y       =
 aniso_perm_z       =
 aniso_use_parflow  =
@@ -92,12 +92,42 @@ specifications in the `*.pfidb` input (`TimingInfo.StartTime`).
 
 ### PF:dt ###
 
-`PF:dt`: (real) Length of ParFlow time step. Must match with the
-specifications in the `*.pfidb` input. 
+`PF:dt`: (real) Inverse factor multiplied to CLM and COSMO time
+steps. For coupled simulations, the quotient of CLM/COSMO time steps
+and this factor should be in agreement with the ParFlow time step
+(`TimingInfo.BaseUnit` in `*.pfidb` input files).
+
+For CLM-ParFlow, `PF:dt` should be set as
+`PF:dt = (dtime / TimingInfo.BaseUnit)`, where `dtime` is
+the time delta specified in the CLM namelist file (`lnd.stdin`).
+
+For COSMO-ParFlow, `PF:dt` should be set as
+`PF:dt = (dt_cos / TimingInfo.BaseUnit) * COSMO:dtmult`.
+TODO: Document COSMO time step setting `dt_cos`.
 
 It is implicitly assumed that ParFlow and CLM calculate the same
-amount of time steps (i.e., have the same time step
-length). (Johannes: This may not be true, CLM time steps are computed)
+number of time steps between two PDAF-calls (this number of time steps
+is specified in `PF:da_interval`).
+
+For CLM-standalone simulations `PF:dt` determines the time unit of
+`PF:da_interval` for CLM simulations as `(dtime / PF:dt)`. Here,
+matching with the ParFlow time step is not an issue.
+
+#### Examples for PF:dt ####
+
+Example 1, CLMSA: `PF:dt==1` means that CLM input `dtime` is the unit of
+`PF:da_interval`. For the default `dtime` of half an hour (1800
+seconds), `PF:da_interval==48` would specify daily observations.
+
+Example 2, CLMSA: For `dtime==1800` and `PF:dt==0.5`, the unit of
+`PF:da_interval` is 1 hour - the standard time unit of
+ParFlow. `PF:da_interval==24` would specify daily observations.
+
+Example 3, FallSchoolCase, CLM-ParFlow: The FallSchoolCase chooses
+`dtime=3600` and `PF:dt==1.0`, which also leads to a unit of 1
+hour. This is in agreement with the FallSchool's ParFlow input script
+(`pfset TimingInfo.BaseUnit 1.0`). `PF:da_interval==1` specifies
+hourly observations.
 
 ### PF:endtime (deprecated) ###
 
@@ -211,7 +241,7 @@ before assimilation and $p_{update}$ is $p$ after the assimilation.
 `PF:dampingfactor_state`: (real) Damping factor for state
 updates. Default `1.0`.
 
-Remark: Currently implemented for `pf_updateflag==1`.
+Remark: Currently implemented for `updateflag==1`.
 
 The damping factor should be chosen between `0.0` and `1.0`, where the
 inputs yield the following behavior:
@@ -227,15 +257,16 @@ x_{update, damped} &= x + \mathtt{dampingfactor\_state} \cdot ( x_{update} - x )
 where $x$ is the state vector (without parameters) before assimilation
 and $x_{update}$ is the state vector after the assimilation.
 
-### PF:damping_masking_sm ###
-`PF:damping_masking_sm`: (integer) Switch for applying damping factor
-for state updates to soil moisture. Default `0`.
+### PF:damping_switch_sm ###
+`PF:damping_switch_sm`: (integer) Switch for applying damping factor
+for state updates to soil moisture. Default `1` (damping factor
+applied). Only applies for `PF:gwmasking==2`.
 
-General state damping is turned on by setting
-`PF:dampingfactor_state`.
+- `0`: State damping not applied to soil moisture
+- `1`: State damping applied to soil moisture
 
-- `0`: State damping vector applies to soil moisture
-- `1`: State damping vector does not apply to soil moisture
+General state damping is turned on by setting `PF:dampingfactor_state`
+to a positive value smaller than `1.0`.
 
 ### PF:aniso_perm_y ###
 
@@ -424,6 +455,9 @@ will get processors if there are processes left after giving
 `COSMO:dtmult`: (integer) Number of COSMO time steps within one
 ParFlow time step.
 
+Remark: This holds for `PF:dt==1`, otherwise `PF:dt` is another factor
+determining how COSMO rebuilds the ParFlow time step.
+
 ## [DA] ##
 
 ### DA:outdir ###
@@ -548,7 +582,7 @@ Effect of `obs_interp_switch=1`:
  |           | `paramupdate_frequency` | 1             |
  |           | `dampingfactor_param`   | 1.0           |
  |           | `dampingfactor_state`   | 1.0           |
- |           | `damping_masking_sm`    | 0             |
+ |           | `damping_switch_sm`     | 1             |
  |           | `aniso_perm_y`          | 1.0           |
  |           | `aniso_perm_z`          | 1.0           |
  |           | `aniso_use_parflow`     | 0             |
@@ -559,6 +593,7 @@ Effect of `obs_interp_switch=1`:
  |           | `paramprintstat`        | 1             |
  |           | `olfmasking`            | 0             |
  |           | `olfmasking_param`      | 0             |
+ |           | `olfmasking_depth`      | 0             |
  | `[CLM]`   |                         |               |
  |           | `problemname`           | \-            |
  |           | `nprocs`                | 0             |
