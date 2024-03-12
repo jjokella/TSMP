@@ -34,4 +34,6 @@ indPFL=
 indPFL2=$indPFL
 pfsolPFL=
 inipress=*.pfb
-slope=   
+slope=
+
+rtimeFactor=1   

@@ -36,3 +36,5 @@ pfsolPFL=geom_cordex0.11_436x424.pfsol
 inipress=
 slope=slope*.sa  
 
+rtimeFactor=1
+
