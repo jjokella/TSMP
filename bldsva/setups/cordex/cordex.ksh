@@ -30,8 +30,6 @@ basePFL=0.0025
 freq1OAS=3600
 freq2OAS=3600
 
-deltaobs=1
-
 indPFL=parflow_436x424x15_cosmomask_indicator_FAOonly.sa
 indPFL2=pfl_ind.sa 					#Name change in cordex setup 
 pfsolPFL=geom_cordex0.11_436x424.pfsol

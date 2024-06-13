@@ -229,27 +229,3 @@ route "${cyellow}>> substitutions_clm${cnormal}"
 
 route "${cyellow}<< substitutions_clm${cnormal}"
 }
-
-
-setup_clm(){
-route "${cyellow}>> setupClm${cnormal}"
-
-#  withCESM="true"
-  seconds_clm=$(($hh*3600))
-#  rpointer=$rundir/lnd.clmoas.rpointer
-  runstep_clm=$runhours
-
-
-comment "  cp namelist to rundir"
-  cp ${namelist_clm} $rundir/lnd.stdin >> $log_file 2>> $err_file
-check
-
-
-comment "  sed num procs to namelist"
-  sed "s,__nprocs__,$(($px_clm * $py_clm))," -i $rundir/lnd.stdin >> $log_file 2>> $err_file
-check
-
-  c_setup_clm
-
-route "${cyellow}<< setupClm${cnormal}"
-}

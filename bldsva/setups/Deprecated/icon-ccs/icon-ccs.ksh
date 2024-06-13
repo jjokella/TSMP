@@ -45,8 +45,6 @@ basePFL=0.0025
 freq1OAS=45
 freq2OAS=45
 
-deltaobs=1
-
 indPFL=
 indPFL2=				#Name change in cordex setup 
 pfsolPFL=
