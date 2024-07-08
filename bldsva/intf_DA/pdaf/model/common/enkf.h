@@ -102,6 +102,7 @@ GLOBAL int pf_aniso_use_parflow;
 GLOBAL int is_dampfac_state_time_dependent;
 GLOBAL int is_dampfac_param_time_dependent;
 GLOBAL int pf_dampswitch_sm;
+GLOBAL int pf_second_update_fresh;
 extern int model;
 extern int mype_model;
 extern int npes_model;

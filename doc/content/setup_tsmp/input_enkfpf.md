@@ -375,6 +375,23 @@ saturated. Masked cells are not used for the parameter update.
 `PF:olfmasking_depth`: (integer) Number of layers (counted from
 surface) to mask in overland flow river masking. Default: 1.
 
+### PF:second_update_fresh ###
+
+`PF:second_update_fresh`: (integer) Switch for treatment of second
+update, when two updates in a row are carried out.
+
+Only works in combination with the settings (1) `PF:gwmasking==1`, (2)
+`PF:updateflag==1` and (3) `PF:updateflag_2==2`.
+
+- Default: `0`. No, "fresh" second update, i.e. the updated state
+  vector from the first update is taken as input for the second
+  update.
+
+- `1`: Fresh update. The state vector that enters the first update,
+  also enters the second update. After both updates, the saturated
+  zone is updated with updated pressures and the unsaturated zone with
+  updated saturations.
+
 ## [CLM] ##
 
 ### CLM:problemname ###

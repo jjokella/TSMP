@@ -78,6 +78,7 @@ void read_enkfpar(char *parname)
   pf_dampfac_state      = iniparser_getdouble(pardict,"PF:dampingfactor_state",1.0);
   pf_dampswitch_sm        = iniparser_getdouble(pardict,"PF:damping_switch_sm",0);
   pf_freq_paramupdate   = iniparser_getint(pardict,"PF:paramupdate_frequency",1);
+  pf_second_update_fresh = iniparser_getint(pardict,"PF:second_update_fresh",0);
   
   /* get settings for CLM */
   string                = iniparser_getstring(pardict,"CLM:problemname", "");
@@ -126,6 +127,25 @@ void read_enkfpar(char *parname)
 
   /* Set pf_updateflag */
   pf_updateflag = pf_updateflag_1;
+
+  /* Checks for PF:second_update_fresh */
+  if(pf_second_update_fresh == 1){
+    /* Groundwater masking check */
+    if(pf_gwmasking != 1 ){
+      printf("Error: PF:second_update_fresh must be used with PF:gwmasking set to 1.\n");
+      exit(1);
+    }
+    /* First update pressure check */
+    if(pf_updateflag != 1 ){
+      printf("Error: PF:second_update_fresh must be used with pressures update as first update (PF:updateflag).\n");
+      exit(1);
+    }
+    /* Second update saturation check */
+    if(pf_updateflag_2 != 2 ){
+      printf("Error: PF:second_update_fresh must be used with saturation update as second update (PF:updateflag_2).\n");
+      exit(1);
+    }
+  }
 
   /* MPI_Comm_size(MPI_COMM_WORLD,&size); */
   /* MPI_Comm_rank(MPI_COMM_WORLD,&rank); */
