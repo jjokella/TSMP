@@ -76,6 +76,7 @@ GLOBAL int point_obs;
 GLOBAL int obs_interp_switch;
 GLOBAL MPI_Fint fsubcomm;
 GLOBAL int oasprefixno;
+GLOBAL int is_first_update;
 GLOBAL int clmprefixlen;
 GLOBAL int pf_updateflag;
 GLOBAL int pf_updateflag_1;

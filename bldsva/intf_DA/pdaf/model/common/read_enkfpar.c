@@ -147,6 +147,9 @@ void read_enkfpar(char *parname)
     }
   }
 
+  /* Set default: is_first_update */
+  is_first_update = 1;
+
   /* MPI_Comm_size(MPI_COMM_WORLD,&size); */
   /* MPI_Comm_rank(MPI_COMM_WORLD,&rank); */
   /* coupcol = task_id - 1; */
