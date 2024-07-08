@@ -467,6 +467,7 @@ void parflow_oasis_init(double current_time, double dt) {
 
   if(pf_gwmasking > 0){
     subvec_gwind           = (double*) calloc(enkf_subvecsize,sizeof(double));
+    subvec_gwind_1         = (double*) calloc(enkf_subvecsize,sizeof(double));
   }
   if(pf_paramupdate == 4){
     dat_alpha          = (double*) calloc(enkf_subvecsize,sizeof(double));
@@ -494,6 +495,7 @@ void parflow_oasis_init(double current_time, double dt) {
   }
 
   pf_statevec            = (double*) calloc(pf_statevecsize,sizeof(double));
+  pf_statevec_first_update = (double*) calloc(pf_statevecsize,sizeof(double));
 }
 
 /*-------------------------------------------------------------------------*/
@@ -2119,6 +2121,56 @@ void update_parflow () {
 
   if(pf_olfmasking == 1 || pf_olfmasking == 3) mask_overlandcells();
   if(pf_olfmasking == 2) mask_overlandcells_river();
+
+  /*
+    PF:second_update_fresh
+    ----------------------
+
+    TODO: Make the fresh second update more general. Currently this is
+    only for: (1) first update pressure, (2) second update SWC
+  */
+  if(pf_second_update_fresh == 1){
+    /*
+      If `pf_second_update_fresh` is true:
+
+      1) First update (pressure): Pressures are not updated, the
+      updated state vector is saved.
+
+      2) Second update (saturation): Additional: Saturated zone
+      updated with pressures from first update. As usual: Unsaturated
+      zone updated with saturations from second update.
+    */
+
+    if(is_first_update == 1){
+      /* Preparations for updating before the second update is
+	 applied. */
+
+      /* Save state vector from first update. */
+      pf_statevec_first_update = pf_statevec;
+
+      /* Set subvec_gwind_1 */
+      subvec_gwind_1 = subvec_gwind;
+
+      /* No updates before the second update */
+      pf_updateflag = 0;
+
+    }else{
+
+      /* Update saturated zone with updated pressures from first
+	 update */
+
+      if(pf_updateflag_1 == 1){
+
+	Vector *pressure_in = GetPressureRichards(solver);
+	/* groundwater masking using saturated cells only */
+	if(pf_gwmasking == 1){
+	  ENKF2PF_masked(pressure_in, pf_statevec_first_update,subvec_gwind_1);
+	}
+
+      }
+
+    }
+  }
 
   if(pf_updateflag == 1) {
     Vector *pressure_in = GetPressureRichards(solver);

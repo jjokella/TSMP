@@ -59,7 +59,7 @@ void read_enkfpar(char *parname)
     t_sim                 = iniparser_getdouble(pardict,"PF:endtime",0);
   }
   dt                    = iniparser_getdouble(pardict,"PF:dt",0);
-  pf_updateflag         = iniparser_getint(pardict,"PF:updateflag",1);
+  pf_updateflag_1       = iniparser_getint(pardict,"PF:updateflag",1);
   pf_updateflag_2       = iniparser_getint(pardict,"PF:updateflag_2",1);
   pf_paramupdate        = iniparser_getint(pardict,"PF:paramupdate",0);
   pf_aniso_perm_y       = iniparser_getdouble(pardict,"PF:aniso_perm_y",1);
@@ -78,6 +78,7 @@ void read_enkfpar(char *parname)
   pf_dampfac_state      = iniparser_getdouble(pardict,"PF:dampingfactor_state",1.0);
   pf_dampswitch_sm        = iniparser_getdouble(pardict,"PF:damping_switch_sm",0);
   pf_freq_paramupdate   = iniparser_getint(pardict,"PF:paramupdate_frequency",1);
+  pf_second_update_fresh = iniparser_getint(pardict,"PF:second_update_fresh",0);
   
   /* get settings for CLM */
   string                = iniparser_getstring(pardict,"CLM:problemname", "");
@@ -123,6 +124,31 @@ void read_enkfpar(char *parname)
   nproccosmo      = iniparser_getint(pardict,"COSMO:nprocs",0);
   dtmult_cosmo    = iniparser_getint(pardict,"COSMO:dtmult",0);
 
+
+  /* Set pf_updateflag */
+  pf_updateflag = pf_updateflag_1;
+
+  /* Checks for PF:second_update_fresh */
+  if(pf_second_update_fresh == 1){
+    /* Groundwater masking check */
+    if(pf_gwmasking != 1 ){
+      printf("Error: PF:second_update_fresh must be used with PF:gwmasking set to 1.\n");
+      exit(1);
+    }
+    /* First update pressure check */
+    if(pf_updateflag != 1 ){
+      printf("Error: PF:second_update_fresh must be used with pressures update as first update (PF:updateflag).\n");
+      exit(1);
+    }
+    /* Second update saturation check */
+    if(pf_updateflag_2 != 2 ){
+      printf("Error: PF:second_update_fresh must be used with saturation update as second update (PF:updateflag_2).\n");
+      exit(1);
+    }
+  }
+
+  /* Set default: is_first_update */
+  is_first_update = 1;
 
   /* MPI_Comm_size(MPI_COMM_WORLD,&size); */
   /* MPI_Comm_rank(MPI_COMM_WORLD,&rank); */
