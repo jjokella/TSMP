@@ -467,6 +467,7 @@ void parflow_oasis_init(double current_time, double dt) {
 
   if(pf_gwmasking > 0){
     subvec_gwind           = (double*) calloc(enkf_subvecsize,sizeof(double));
+    subvec_gwind_1         = (double*) calloc(enkf_subvecsize,sizeof(double));
   }
   if(pf_paramupdate == 4){
     dat_alpha          = (double*) calloc(enkf_subvecsize,sizeof(double));
@@ -494,6 +495,7 @@ void parflow_oasis_init(double current_time, double dt) {
   }
 
   pf_statevec            = (double*) calloc(pf_statevecsize,sizeof(double));
+  pf_statevec_first_update = (double*) calloc(pf_statevecsize,sizeof(double));
 }
 
 /*-------------------------------------------------------------------------*/

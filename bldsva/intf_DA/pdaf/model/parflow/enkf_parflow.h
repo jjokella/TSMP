@@ -53,7 +53,9 @@ GLOBAL int *riveridx,*riveridy,nriverid;
 /* global double variables */
 GLOBAL double *subvec_p, *subvec_sat, *subvec_porosity, *subvec_param;
 GLOBAL double *subvec_gwind;
+GLOBAL double *subvec_gwind_1;
 GLOBAL double *pf_statevec;
+GLOBAL double *pf_statevec_first_update;
 GLOBAL double *subvec_permy;
 GLOBAL double *subvec_permz;
 GLOBAL double *arr_aniso_perm_yy;
