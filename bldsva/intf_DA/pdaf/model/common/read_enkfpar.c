@@ -59,7 +59,7 @@ void read_enkfpar(char *parname)
     t_sim                 = iniparser_getdouble(pardict,"PF:endtime",0);
   }
   dt                    = iniparser_getdouble(pardict,"PF:dt",0);
-  pf_updateflag         = iniparser_getint(pardict,"PF:updateflag",1);
+  pf_updateflag_1       = iniparser_getint(pardict,"PF:updateflag",1);
   pf_updateflag_2       = iniparser_getint(pardict,"PF:updateflag_2",1);
   pf_paramupdate        = iniparser_getint(pardict,"PF:paramupdate",0);
   pf_aniso_perm_y       = iniparser_getdouble(pardict,"PF:aniso_perm_y",1);
@@ -123,6 +123,9 @@ void read_enkfpar(char *parname)
   nproccosmo      = iniparser_getint(pardict,"COSMO:nprocs",0);
   dtmult_cosmo    = iniparser_getint(pardict,"COSMO:dtmult",0);
 
+
+  /* Set pf_updateflag */
+  pf_updateflag = pf_updateflag_1;
 
   /* MPI_Comm_size(MPI_COMM_WORLD,&size); */
   /* MPI_Comm_rank(MPI_COMM_WORLD,&rank); */
