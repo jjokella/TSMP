@@ -23,7 +23,7 @@
 !-------------------------------------------------------------------------------------------
 
 module mod_read_obs
- use iso_C_binding
+  use iso_C_binding
 
   implicit none
   integer, allocatable :: idx_obs_nc(:), x_idx_obs_nc(:), y_idx_obs_nc(:), z_idx_obs_nc(:), var_id_obs_nc(:,:)
@@ -536,8 +536,11 @@ contains
   !> @param[in] fn Filename of the observation file
   !> @param[out] nn number of observations in `fn`
   !> @details
-  !>     Reads the content of the variable name `no_obs` from NetCDF
-  !>     file `fn` using subroutines from the NetCDF module.
+  !>     Reads the content of the variable (!) named `no_obs` from 
+  !>     NetCDF file `fn`.
+  !>
+  !>     Uses  subroutines from the NetCDF module.
+  !>
   !>     The result is returned in `nn`.
   !>
   !>     The result is used to decide if the next observation file is
