@@ -2167,6 +2167,10 @@ void update_parflow () {
 	  ENKF2PF_masked(pressure_in, pf_statevec_first_update,subvec_gwind_1);
 	}
 
+	/* update ghost cells for pressure */
+	handle = InitVectorUpdate(pressure_in, VectorUpdateAll);
+	FinalizeVectorUpdate(handle);
+
       }
 
     }
