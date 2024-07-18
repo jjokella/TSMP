@@ -2141,6 +2141,8 @@ void update_parflow () {
       zone updated with saturations from second update.
     */
 
+    printf("TSMP-PDAF-WRAPPER mype(w)=%d: is_first_update=%d, pf_updateflag=%d, pf_updateflag_1=%d, pf_updateflag_2=%d\n", mype_world, is_first_update, pf_updateflag_1, pf_updateflag_2);
+
     if(is_first_update == 1){
       /* Preparations for updating before the second update is
 	 applied. */
