@@ -2148,10 +2148,10 @@ void update_parflow () {
 	 applied. */
 
       /* Save state vector from first update. */
-      pf_statevec_first_update = pf_statevec;
+      memcpy(pf_statevec_first_update, pf_statevec, pf_statevecsize * sizeof(double));
 
       /* Set subvec_gwind_1 */
-      subvec_gwind_1 = subvec_gwind;
+      memcpy(subvec_gwind_1, subvec_gwind, enkf_subvecsize * sizeof(double));
 
       /* No updates before the second update */
       pf_updateflag = 0;
