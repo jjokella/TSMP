@@ -1,0 +1,58 @@
+cff-version: 1.2.0
+message: "If you use TSMP in a publication, please cite the references that describe the model's basic functionalities."
+# authors:
+#   - family-names: Druskat
+#     given-names: Stephan
+#     orcid: https://orcid.org/1234-5678-9101-1121
+title: "Terrestrial System Modeling Platform - TSMP"
+# version: 1.0
+# identifiers:
+#   - type: doi
+#     value: 10.5281/zenodo.1234
+# date-released: 2021-08-11
+references:
+  - authors:
+      - family-names: Shrestha
+        given-names: P.
+      - family-names: Sulis
+        given-names: M.
+      - family-names: Masbou
+        given-names: M.
+      - family-names: Kollet
+        given-names: S.
+      - family-names: Simmer
+        given-names: C.
+    doi: 10.1175/MWR-D-14-00029.1
+    journal: "Monthly Weather Review"
+    volume: 142
+    month: 9
+    start: 3466
+    end: 3483
+    title: "A Scale-Consistent Terrestrial Systems Modeling Platform Based on COSMO, CLM, and ParFlow"
+    type: article
+    year: 2014
+  - authors:
+      - family-names: Gasper
+        given-names: F.
+      - family-names: Goergen
+        given-names: K.
+      - family-names: Kollet
+        given-names: S.
+      - family-names: Shrestha
+        given-names: P.
+      - family-names: Sulis
+        given-names: M.
+      - family-names: Rihani
+        given-names: J.
+      - family-names: Geimer
+        given-names: M.
+      - name: "FORCE11 Software Citation Working Group"
+    doi: 10.5194/gmd-7-2531-2014
+    journal: "Geoscientific Model Development"
+    month: 5
+    start: 2531
+    start: 2543
+    title: "Implementation and scaling of the fully coupled Terrestrial Systems Modeling Platform (TerrSysMP) in a massively parallel supercomputing environment - a case study on JUQUEEN (IBM Blue Gene/Q)"
+    type: article
+    volume: 7
+    year: 2014
