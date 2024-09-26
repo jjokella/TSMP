@@ -1,11 +1,60 @@
 cff-version: 1.2.0
 message: "If you use TSMP in a publication, please cite the references that describe the model's basic functionalities."
-# authors:
-#   - family-names: Druskat
-#     given-names: Stephan
-#     orcid: https://orcid.org/1234-5678-9101-1121
+authors:
+  - family-names: Shrestha
+    given-names: Prabhakar
+  - family-names: Sulis
+    given-names: Mauro
+  - family-names: Kollet
+    given-names: Stefan
+  - family-names: Gasper
+    given-names: Fabian
+  - family-names: Kurtz
+    given-names: Wolfgang
+  - family-names: Keune
+    given-names: Jessica
+  - family-names: Kulkarni
+    given-names: Ketan
+  - family-names: Brdar
+    given-names: Slavko
+  - family-names: Wagner
+    given-names: Niklas
+  - family-names: Pondkule
+    given-names: Mukund
+  - family-names: Strebel
+    given-names: Lukas
+  - family-names: Schruff
+    given-names: Tobias
+  - family-names: Hoar
+    given-names: Tim
+  - family-names: Han
+    given-names: Cunbo
+  - family-names: Uebel
+    given-names: Markus
+  - family-names: He
+    given-names: Guowei
+  - family-names: Zhao
+    given-names: Haojin
+  - family-names: Goergen
+    given-names: Klaus
+  - family-names: Ghasemi
+    given-names: Abouzar
+  - family-names: Poll
+    given-names: Stefan
+  - family-names: Keller
+    given-names: Johannes
+  - family-names: Rigor
+    given-names: Paul
+  - family-names: Caviedes-Voullieme
+    given-names: Daniel
+  - family-names: Zhukov
+    given-names: Ilya
+  - family-names: Benke
+    given-names: Joerg
+  - family-names: Hartick
+    given-names: Carl
 title: "Terrestrial System Modeling Platform - TSMP"
-# version: 1.0
+version: 1.0
 # identifiers:
 #   - type: doi
 #     value: 10.5281/zenodo.1234
