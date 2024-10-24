@@ -131,7 +131,7 @@ SUBROUTINE init_dim_obs_f_pdaf(step, dim_obs_f)
   integer :: ierror
   INTEGER :: max_var_id
   INTEGER :: sum_dim_obs_p
-  INTEGER :: i,j,k,count  ! Counters
+  INTEGER :: i,j,k,ii  ! Counters
   INTEGER :: m,l          ! Counters
   logical :: is_multi_observation_files
   character (len = 110) :: current_observation_filename
@@ -350,7 +350,7 @@ SUBROUTINE init_dim_obs_f_pdaf(step, dim_obs_f)
      obs_id_p(:) = 0
 
      do i = 1, dim_obs
-        count = 1
+        ii = 1
         obs_snapped = .false.
         do j = begg, endg
             if(is_use_dr) then
@@ -359,9 +359,9 @@ SUBROUTINE init_dim_obs_f_pdaf(step, dim_obs_f)
             end if
             ! Assigning observations to grid cells according to
             ! snapping distance or index arrays
-            if(((is_use_dr).and.(deltax.le.clmobs_dr(1)).and.(deltay.le.clmobs_dr(2))).or.((.not. is_use_dr).and.(longxy_obs(i) == longxy(count)) .and. (latixy_obs(i) == latixy(count)))) then
+            if(((is_use_dr).and.(deltax.le.clmobs_dr(1)).and.(deltay.le.clmobs_dr(2))).or.((.not. is_use_dr).and.(longxy_obs(i) == longxy(ii)) .and. (latixy_obs(i) == latixy(ii)))) then
                 dim_obs_p = dim_obs_p + 1
-                obs_id_p(count) = i
+                obs_id_p(ii) = i
 
                 ! Check if observation has already been snapped.
                 ! Comment out if multiple grids per observation are wanted.
@@ -378,7 +378,7 @@ SUBROUTINE init_dim_obs_f_pdaf(step, dim_obs_f)
                 ! Set observation as counted
                 obs_snapped = .true.
             end if
-            count = count + 1
+            ii = ii + 1
         end do
     end do
   end if
@@ -424,14 +424,14 @@ SUBROUTINE init_dim_obs_f_pdaf(step, dim_obs_f)
   ! sorted by pdaf: obs_nc2pdaf
 
   ! Non-trivial example: The second observation in the NetCDF file
-  ! (`i=2`) is the only observation in the subgrid (`count = 1`) of
+  ! (`i=2`) is the only observation in the subgrid (`ii = 1`) of
   ! the first PE (`mype_filter = 0`):
   !
   ! i = 2
-  ! count = 1
+  ! ii = 1
   ! mype_filter = 0
   ! 
-  ! obs_nc2pdaf(local_dis(mype_filter+1)+count) = i
+  ! obs_nc2pdaf(local_dis(mype_filter+1)+ii) = i
   !-> obs_nc2pdaf(local_dis(1)+1) = 2
   !-> obs_nc2pdaf(1) = 2
 
@@ -502,7 +502,7 @@ SUBROUTINE init_dim_obs_f_pdaf(step, dim_obs_f)
         iy_var_id(j) = (maxiy(j) + miniy(j))/2.0
      end do
 
-     count = 1
+     ii = 1
      do m = 1, dim_nx
         do k = 1, dim_ny
            i = (m-1)* dim_ny + k    
@@ -510,31 +510,31 @@ SUBROUTINE init_dim_obs_f_pdaf(step, dim_obs_f)
            ! coords_obs(1, i) = idx_obs_nc(i)
            do j = 1, enkf_subvecsize
               if (idx_obs_nc(i) .eq. idx_map_subvec2state_fortran(j)) then
-                 obs_index_p(count) = j
-                 obs_p(count) = pressure_obs(i)
-                 var_id_obs(count) = var_id_obs_nc(k,m)
-                 if(multierr.eq.1) pressure_obserr_p(count) = pressure_obserr(i)
-                 count = count + 1
+                 obs_index_p(ii) = j
+                 obs_p(ii) = pressure_obs(i)
+                 var_id_obs(ii) = var_id_obs_nc(k,m)
+                 if(multierr.eq.1) pressure_obserr_p(ii) = pressure_obserr(i)
+                 ii = ii + 1
               end if
            end do
         end do
      end do
   else if (point_obs.eq.1) then
 
-     count = 1
+     ii = 1
      do i = 1, dim_obs
         obs(i) = pressure_obs(i)  
         ! coords_obs(1, i) = idx_obs_nc(i)
         do j = 1, enkf_subvecsize
            if (idx_obs_nc(i) .eq. idx_map_subvec2state_fortran(j)) then
               !print *, j
-              !obs_index(count) = j
-              !obs(count) = pressure_obs(i)
-              obs_index_p(count) = j
-              obs_p(count) = pressure_obs(i)
-              if(multierr.eq.1) pressure_obserr_p(count) = pressure_obserr(i)
-              obs_nc2pdaf(local_dis(mype_filter+1)+count) = i
-              count = count + 1
+              !obs_index(ii) = j
+              !obs(ii) = pressure_obs(i)
+              obs_index_p(ii) = j
+              obs_p(ii) = pressure_obs(i)
+              if(multierr.eq.1) pressure_obserr_p(ii) = pressure_obserr(i)
+              obs_nc2pdaf(local_dis(mype_filter+1)+ii) = i
+              ii = ii + 1
            end if
         end do
      end do
@@ -591,7 +591,7 @@ SUBROUTINE init_dim_obs_f_pdaf(step, dim_obs_f)
         enddo  ! allocate clm_obserr_p observation error for clm run at PE-local domain
      enddo
 
-     count = 1
+     ii = 1
      do m = 1, dim_nx
         do l = 1, dim_ny
            i = (m-1)* dim_ny + l        
@@ -599,11 +599,11 @@ SUBROUTINE init_dim_obs_f_pdaf(step, dim_obs_f)
            k = 1
            do j = begg,endg
               if((longxy_obs(i) == longxy(k)) .and. (latixy_obs(i) == latixy(k))) then
-                 obs_index_p(count) = k 
-                 obs_p(count) = clm_obs(i)
-                 var_id_obs(count) = var_id_obs_nc(l,m)
-                 if(multierr.eq.1) clm_obserr_p(count) = clm_obserr(i)
-                 count = count + 1
+                 obs_index_p(ii) = k 
+                 obs_p(ii) = clm_obs(i)
+                 var_id_obs(ii) = var_id_obs_nc(l,m)
+                 if(multierr.eq.1) clm_obserr_p(ii) = clm_obserr(i)
+                 ii = ii + 1
               endif
               k = k + 1
            end do
@@ -611,7 +611,7 @@ SUBROUTINE init_dim_obs_f_pdaf(step, dim_obs_f)
      end do
   else if(point_obs.eq.1) then
 
-     count = 1
+     ii = 1
      do i = 1, dim_obs
         obs(i) = clm_obs(i) 
         k = 1
@@ -621,15 +621,15 @@ SUBROUTINE init_dim_obs_f_pdaf(step, dim_obs_f)
                 deltay = abs(lat(j)-clmobs_lat(i))
             end if
             if(((is_use_dr).and.(deltax.le.clmobs_dr(1)).and.(deltay.le.clmobs_dr(2))).or.((.not. is_use_dr).and.(longxy_obs(i) == longxy(k)) .and. (latixy_obs(i) == latixy(k)))) then
-              !obs_index_p(count) = j + (size(lon) * (clmobs_layer(i)-1))
-              !obs_index_p(count) = j + ((endg-begg+1) * (clmobs_layer(i)-1))
-              !obs_index_p(count) = j-begg+1 + ((endg-begg+1) * (clmobs_layer(i)-1))
-              obs_index_p(count) = k + ((endg-begg+1) * (clmobs_layer(i)-1))
-              !write(*,*) 'obs_index_p(',count,') is',obs_index_p(count)
-              obs_p(count) = clm_obs(i)
-              if(multierr.eq.1) clm_obserr_p(count) = clm_obserr(i)
-              obs_nc2pdaf(local_dis(mype_filter+1)+count) = i
-              count = count + 1
+              !obs_index_p(ii) = j + (size(lon) * (clmobs_layer(i)-1))
+              !obs_index_p(ii) = j + ((endg-begg+1) * (clmobs_layer(i)-1))
+              !obs_index_p(ii) = j-begg+1 + ((endg-begg+1) * (clmobs_layer(i)-1))
+              obs_index_p(ii) = k + ((endg-begg+1) * (clmobs_layer(i)-1))
+              !write(*,*) 'obs_index_p(',ii,') is',obs_index_p(ii)
+              obs_p(ii) = clm_obs(i)
+              if(multierr.eq.1) clm_obserr_p(ii) = clm_obserr(i)
+              obs_nc2pdaf(local_dis(mype_filter+1)+ii) = i
+              ii = ii + 1
            end if
            k = k + 1
         end do
