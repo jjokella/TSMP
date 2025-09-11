@@ -80,7 +80,7 @@ nnodes=`echo "scale = 2; $mpitasks / $nppn" | bc | perl -nl -MPOSIX -e 'print ce
 
 #DA
 if [[ $withPDAF == "true" ]] ; then
-  srun="srun -n $mpitasks ./tsmp-pdaf -n_modeltasks $(($numInst-$startInst)) -filtertype 2 -subtype 1 -delt_obs $delta_obs -rms_obs 0.03 -obs_filename swc_crp"
+  srun="srun -n $mpitasks ./tsmp-pdaf -n_modeltasks $(($numInst-$startInst)) -screen $pdaf_screen -filtertype $pdaf_filtertype -subtype $pdaf_subtype -delt_obs $pdaf_delt_obs -rms_obs $pdaf_rms_obs -obs_filename $pdaf_obs_filename"
 else
   srun="srun --multi-prog slm_multiprog_mapping.conf"
 fi
@@ -133,6 +133,44 @@ EOF
 
 else
 
+if [[ $withPDAF == "true" ]] ; then
+
+cat << EOF >> $rundir/tsmp_slm_run.bsh
+#!/bin/bash
+
+#SBATCH --job-name="TSMP-PDAF"
+#SBATCH --nodes=$nnodes
+###SBATCH --ntasks=$mpitasks
+#SBATCH --ntasks-per-node=$nppn
+#SBATCH --output=tsmppdaf-out.%j
+#SBATCH --error=tsmppdaf-err.%j
+#SBATCH --time=$wtime
+#SBATCH --partition=$queue
+#SBATCH --mail-type=NONE
+#SBATCH --account=slts
+
+#export PSP_RENDEZVOUS_OPENIB=-1
+
+cd $rundir
+source $rundir/loadenvs
+
+date
+echo "started" > started.txt
+#rm -rf YU*
+
+export $profVar
+
+$srun
+
+date
+echo "ready" > ready.txt
+
+exit 0
+
+EOF
+
+else
+
 cat << EOF >> $rundir/tsmp_slm_run.bsh
 #!/bin/bash
 
@@ -148,6 +186,7 @@ cat << EOF >> $rundir/tsmp_slm_run.bsh
 #SBATCH --account=deepsea 
 
 export PSP_RENDEZVOUS_OPENIB=-1
+
 cd $rundir
 source $rundir/loadenvs
 date
@@ -158,7 +197,11 @@ $srun
 date
 echo "ready" > ready.txt
 exit 0
+
 EOF
+
+fi
+
 fi
 
 

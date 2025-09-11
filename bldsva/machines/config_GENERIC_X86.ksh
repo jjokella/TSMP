@@ -57,7 +57,7 @@ nnodes=`echo "scale = 2; $mpitasks / $nppn" | bc | perl -nl -MPOSIX -e 'print ce
 
 #DA
 if [[ $withPDAF == "true" ]] ; then
-  srun="mpiexec -n $mpitasks ./tsmp-pdaf -n_modeltasks $(($numInst-$startInst)) -filtertype 2 -subtype 1 -delt_obs $delta_obs -rms_obs 0.03 -obs_filename swc_crp"
+  srun="mpiexec -n $mpitasks ./tsmp-pdaf -n_modeltasks $(($numInst-$startInst)) -screen $pdaf_screen -filtertype $pdaf_filtertype -subtype $pdaf_subtype -delt_obs $pdaf_delt_obs -rms_obs $pdaf_rms_obs -obs_filename $pdaf_obs_filename"
 else
   srun="mpiexec -np $nproc_cos ./lmparbin_pur : -np $nproc_pfl ./parflow $pflrunname : -np $nproc_clm ./clm"
 fi

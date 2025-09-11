@@ -39,7 +39,7 @@ initSetup(){
   cplfreq1=9000
   #cplfreq2=900
 
-  delta_obs=1
+  pdaf_delt_obs=1
  
   if [[ $withPFL == "false" && $withICON == "true" ]]; then
     defaultNLOAS=$rootdir/bldsva/data_oas3/namcouple_icon_clm

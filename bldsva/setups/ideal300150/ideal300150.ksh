@@ -30,8 +30,6 @@ basePFL=0.0025
 freq1OAS=900
 freq2OAS=900
 
-deltaobs=1
-
 indPFL=
 indPFL2=$indPFL
 pfsolPFL=
